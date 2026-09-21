@@ -307,7 +307,7 @@ const NEWA_SEED=[
 /* ============ STATE ============ */
 const SNEXT={todo:"doing",doing:"done",done:"todo"};
 const SLABEL={todo:"Not started",doing:"In progress",done:"Done"};
-const ASSIGNEES=["—","Mark","Dedric","VA"];
+const ASSIGNEES=["—","Desere","AC","Michael","Liezel","Jay R","Cha Cha","Mark"];
 function blankIdx(){return {g:{s:"not",d:""},bing:{s:"not",d:""},yandex:{s:"not",d:""},blBuilt:"",blTarget:"",blType:""};}
 function blankRow(seedIdxc){
   let g="not"; if(seedIdxc==="ok"||seedIdxc==="leg")g="idx"; else if(seedIdxc==="warn")g="sub";
@@ -560,6 +560,7 @@ meEl.oninput=()=>{me=meEl.value.trim();localStorage.setItem(LS_ME,me);};
   me=localStorage.getItem(LS_ME)||"";meEl.value=me;
   let u=localStorage.getItem(LS_URL),k=localStorage.getItem(LS_KEY);
   const h=location.hash.slice(1).split("|");if(h.length===2){u=decodeURIComponent(h[0]);k=decodeURIComponent(h[1]);history.replaceState(null,"",location.pathname);}
+  u=u||"https://xhshpvxtgrmxqtbieeyr.supabase.co";k=k||"";
   // start hidden on playbook controls until connected
   if(u&&k){document.getElementById("su-url").value=u;document.getElementById("su-key").value=k;connect(u,k);}
   else {showSetup(true);}
