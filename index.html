@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=ba009426-7210-45f9-8d8b-f3ac59bc9f06
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=ba009426-7210-45f9-8d8b-f3ac59bc9f06">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Blazer2Role SEO/AEO Tracker — Team Shared</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Spline+Sans:wght@400;500;600;700&display=swap');
+  :root{--ink:#16170f;--paper:#f4f1e9;--paper2:#ece7da;--line:#d9d3c4;--accent:#3a7c52;--clay:#c0632a;--gold:#b8902f;--muted:#6b6555;--card:#fbf9f3;--dark:#16170f;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Spline Sans',-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 22px;}
+  header{background:var(--dark);color:var(--paper);padding:30px 0 26px;border-bottom:5px solid var(--clay);}
+  .kicker{font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#b9c7ad;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  header h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(22px,4vw,34px);letter-spacing:-0.02em;line-height:1.12;}
+  header p{color:#d3cebf;margin-top:9px;max-width:74ch;font-size:14px;}
+  .who{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .who input{font:inherit;font-size:13px;padding:7px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;width:180px;}
+  .who input::placeholder{color:#b3ad9c;}
+  .who .lbl{font-size:12px;color:#b3ad9c;}
+  .conn{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+  .conn.on{background:#1f3d2a;color:#9fe0b4;} .conn.off{background:#4a2418;color:#f0b49a;} .conn.sync{background:#3a3417;color:#e6cf7a;}
+  .stat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:20px;}
+  .stat{border-top:2px solid rgba(255,255,255,0.22);padding-top:9px;}
+  .stat .n{font-family:'Fraunces',serif;font-size:23px;font-weight:600;color:#fff;line-height:1;}
+  .stat .l{font-size:10.5px;color:#b3ad9c;margin-top:5px;}
+  @media(max-width:820px){.stat-row{grid-template-columns:repeat(3,1fr);}}
+  .tabs{background:var(--paper);border-bottom:1px solid var(--line);}
+  .tabs .wrap{display:flex;gap:6px;padding-top:14px;flex-wrap:wrap;}
+  .tab{border:1px solid var(--line);border-bottom:none;background:var(--card);padding:11px 18px;font:inherit;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:10px 10px 0 0;}
+  .tab.active{background:var(--ink);color:var(--paper);}
+  .toolbar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding:14px 0;}
+  .toolbar .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);}
+  .seg button{border:none;background:none;padding:7px 12px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;}
+  .seg button.active{background:var(--ink);color:var(--paper);font-weight:600;}
+  .search{flex:1;min-width:150px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13px;background:var(--card);color:var(--ink);}
+  .btn{padding:8px 14px;border:1px solid var(--ink);border-radius:10px;background:var(--ink);color:var(--paper);font:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn.ghost{background:none;color:var(--ink);}
+  .btn:hover{opacity:.88;}
+  .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .table-wrap{overflow-x:auto;margin:20px 0 36px;border:1px solid var(--line);border-radius:14px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.blogs{min-width:1520px;} table.tech{min-width:1120px;} table.newa{min-width:1800px;}
+  thead th{position:sticky;top:0;background:var(--dark);color:var(--paper);text-align:left;padding:11px 12px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+  tbody td{padding:12px 12px;border-top:1px solid var(--line);vertical-align:top;}
+  tbody tr:nth-child(even) td{background:var(--card);}
+  tbody tr.done td{opacity:.5;}
+  tbody tr.done .title,tbody tr.done .asset{text-decoration:line-through;}
+  .id{font-family:'Fraunces',serif;font-weight:700;color:var(--muted);white-space:nowrap;}
+  .title,.asset{font-weight:600;color:var(--ink);word-break:break-word;max-width:230px;}
+  .slug{font-size:12px;color:var(--clay);font-weight:600;word-break:break-all;max-width:170px;}
+  .reason{max-width:240px;color:var(--muted);font-size:12px;}
+  .task{max-width:280px;color:var(--ink);font-size:12.5px;}
+  .issue{max-width:220px;color:var(--muted);font-size:12px;}
+  .kw{font-size:12px;color:var(--clay);font-weight:600;max-width:160px;}
+  .haskw{font-size:12px;max-width:150px;}
+  .haskw.yes{color:var(--accent);font-weight:600;} .haskw.no{color:#a23a12;font-weight:600;} .haskw.partial{color:var(--gold);font-weight:600;}
+  .small{font-size:12px;color:var(--muted);max-width:200px;}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+  .pP0{background:#f6dccf;color:#a23a12;} .pP1{background:#e3efe6;color:#2f6b43;} .pP2{background:#f3e9d2;color:#8a6a14;} .pP3{background:#e7e2d4;color:#6b6555;}
+  .type{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);}
+  .grp{display:inline-block;font-family:'Fraunces',serif;font-weight:700;width:24px;height:24px;line-height:24px;text-align:center;border-radius:6px;color:#fff;font-size:13px;}
+  .gA{background:var(--clay);} .gB{background:#7d8a6b;} .gC{background:var(--gold);}
+  .status-btn{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .status-btn.todo{background:#eceadd;color:#6b6555;}
+  .status-btn.doing{background:#f6eccf;color:#8a6a14;border-color:#e6d3a0;}
+  .status-btn.done{background:#e1efe5;color:#2f6b43;border-color:#bfdcc8;}
+  .assignee{font:inherit;font-size:11px;font-weight:600;border:1px solid var(--line);border-radius:6px;padding:3px 5px;background:var(--card);color:var(--ink);cursor:pointer;max-width:96px;}
+  .by{font-size:10px;color:var(--muted);margin-top:4px;font-style:italic;max-width:96px;line-height:1.3;}
+  .idx-cell{min-width:148px;}
+  .idx-eng{display:flex;align-items:center;gap:6px;margin-bottom:5px;}
+  .idx-eng:last-child{margin-bottom:0;}
+  .idx-eng .e{font-size:9.5px;font-weight:800;letter-spacing:.04em;width:34px;color:var(--muted);text-transform:uppercase;flex-shrink:0;}
+  select.idx-sel{font:inherit;font-size:10.5px;font-weight:700;border:1px solid var(--line);border-radius:6px;padding:2px 4px;background:var(--card);color:var(--ink);cursor:pointer;max-width:74px;}
+  select.idx-sel.s-idx{background:#e1efe5;color:#2f6b43;border-color:#bfdcc8;}
+  select.idx-sel.s-no{background:#f6dccf;color:#a23a12;border-color:#eccab9;}
+  select.idx-sel.s-sub{background:#f6eccf;color:#8a6a14;border-color:#e6d3a0;}
+  select.idx-sel.s-err{background:#f3d0d0;color:#8c1d1d;border-color:#e4b4b4;}
+  input.idx-date{font:inherit;font-size:10px;border:1px solid var(--line);border-radius:6px;padding:2px 3px;width:64px;background:var(--card);color:var(--muted);}
+  .bl-cell{min-width:120px;}
+  .bl-row{display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+  .bl-row .lab{font-size:9.5px;font-weight:800;color:var(--muted);width:40px;text-transform:uppercase;letter-spacing:.03em;}
+  input.bl-num{font:inherit;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:2px 5px;width:42px;background:var(--card);color:var(--ink);text-align:center;}
+  input.bl-type{font:inherit;font-size:10.5px;border:1px solid var(--line);border-radius:6px;padding:2px 5px;width:88px;background:var(--card);color:var(--ink);}
+  textarea.note{font:inherit;font-size:11.5px;border:1px solid var(--line);border-radius:8px;padding:6px 7px;width:180px;min-height:46px;background:var(--card);color:var(--ink);resize:vertical;line-height:1.4;}
+  input.ed{font:inherit;font-size:12.5px;border:1px solid transparent;border-radius:6px;padding:4px 5px;width:100%;background:transparent;color:var(--ink);}
+  input.ed:hover{border-color:var(--line);} input.ed:focus{border-color:var(--accent);background:var(--card);outline:none;}
+  input.ed.title{font-weight:600;min-width:170px;} input.ed.kw{color:var(--clay);font-weight:600;min-width:130px;}
+  input.dt{font:inherit;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:3px 4px;width:108px;background:var(--card);color:var(--muted);}
+  select.ed-sel{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:6px;padding:3px 5px;background:var(--card);color:var(--ink);cursor:pointer;}
+  .del-btn{border:1px solid #eccab9;background:#f9ece5;color:#a23a12;border-radius:8px;width:28px;height:28px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;line-height:1;}
+  .del-btn:hover{background:#f3d9cd;}
+  .how-btn{border:1px solid var(--accent);background:#eaf3ec;color:#2f6b43;border-radius:8px;padding:5px 10px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  tr.how-row td{background:#f7f4ec !important;border-top:none;padding:0;}
+  .how-inner{padding:16px 20px 20px;border-left:4px solid var(--accent);margin:2px 0;}
+  .how-inner h4{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .how-inner .ctx{font-size:12px;color:var(--muted);margin-bottom:12px;}
+  .how-inner ol{margin:0 0 0 4px;padding:0;counter-reset:step;list-style:none;}
+  .how-inner ol li{position:relative;padding:0 0 10px 34px;font-size:13px;line-height:1.5;color:var(--ink);}
+  .how-inner ol li:before{counter-increment:step;content:counter(step);position:absolute;left:0;top:-1px;width:23px;height:23px;background:var(--accent);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:12px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .save-pill{font-size:11px;font-weight:700;color:var(--accent);margin-left:6px;opacity:0;transition:opacity .25s;}
+  .save-pill.show{opacity:1;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin:0 0 22px;}
+  .legend b{color:var(--ink);}
+  .opt-note{background:#fbf4e8;border:1px solid #ecdcb9;border-left:4px solid var(--gold);border-radius:10px;padding:14px 16px;margin:0 0 22px;font-size:13px;color:#5d5230;}
+  footer{padding:24px 0 56px;color:var(--muted);font-size:12px;}
+  .hidden{display:none;}
+  /* setup modal */
+  .ov{position:fixed;inset:0;background:rgba(16,17,15,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .setup{background:var(--paper);border-radius:18px;max-width:600px;width:100%;padding:30px 32px;max-height:90vh;overflow:auto;}
+  .setup h2{font-family:'Fraunces',serif;font-size:24px;font-weight:600;margin-bottom:6px;}
+  .setup p{font-size:13.5px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+  .setup label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:14px 0 5px;}
+  .setup input{width:100%;font:inherit;font-size:14px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);}
+  .setup .err{background:#f9ece5;color:#a23a12;border-radius:9px;padding:10px 13px;font-size:12.5px;margin-top:14px;display:none;}
+  .setup .err.show{display:block;}
+  .setup details{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
+  .setup summary{font-size:13px;font-weight:700;color:var(--accent);cursor:pointer;}
+  .setup details ol{margin:12px 0 0 4px;padding:0;counter-reset:s;list-style:none;}
+  .setup details li{position:relative;padding:0 0 10px 30px;font-size:12.5px;line-height:1.5;color:var(--ink);}
+  .setup details li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;background:var(--accent);color:#fff;font-weight:700;font-size:11px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .setup pre{background:var(--ink);color:#cfe6d4;padding:12px 14px;border-radius:10px;font-size:11px;overflow:auto;margin:8px 0;white-space:pre-wrap;word-break:break-all;line-height:1.5;}
+  .setup .btn{margin-top:18px;width:100%;padding:13px;font-size:15px;justify-content:center;}
+  .pb{max-width:980px;margin:0 0 40px;}
+  .pb-intro{background:#fbf4e8;border:1px solid #ecdcb9;border-left:4px solid var(--gold);border-radius:12px;padding:16px 18px;margin-bottom:24px;font-size:13.5px;color:#5d5230;line-height:1.6;}
+  .pb h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin:30px 0 6px;}
+  .pb .sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
+  .pb-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px;}
+  .pb-card h3{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:9px;}
+  .pb-card h3 .badge{font-family:'Spline Sans';font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:20px;}
+  .pb-card .why{font-size:12.5px;color:var(--muted);margin-bottom:12px;font-style:italic;}
+  .pb-card ol,.pb-card ul{margin:0 0 0 2px;padding:0;list-style:none;}
+  .pb-card ol{counter-reset:pstep;}
+  .pb-card ol li{position:relative;padding:0 0 9px 32px;font-size:13px;line-height:1.55;}
+  .pb-card ol li:before{counter-increment:pstep;content:counter(pstep);position:absolute;left:0;top:-1px;width:22px;height:22px;background:var(--clay);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:11.5px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .pb-card ul li{position:relative;padding:0 0 8px 20px;font-size:13px;line-height:1.55;}
+  .pb-card ul li:before{content:"";position:absolute;left:2px;top:8px;width:7px;height:7px;background:var(--accent);border-radius:2px;}
+  .pb-card .tip{background:#eaf3ec;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#2f6b43;margin-top:10px;}
+  .pb-card .warn{background:#f9ece5;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#a23a12;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<!-- ===== SETUP MODAL ===== -->
+<div class="ov" id="setup-ov">
+  <div class="setup">
+    <h2>Connect your team database</h2>
+    <p>One-time setup. Paste your free Supabase <b>Project URL</b> and <b>anon key</b> below. Once connected, every teammate who opens this site shares the same live data — auto-saved, auto-synced. Your keys are stored only in this browser.</p>
+    <label>Supabase Project URL</label>
+    <input id="su-url" placeholder="https://xxxxxxxx.supabase.co" autocomplete="off">
+    <label>Supabase anon / publishable key</label>
+    <input id="su-key" placeholder="sb_publishable_... or eyJhbGciOi..." autocomplete="off">
+    <div class="err" id="su-err"></div>
+    <button class="btn" id="su-go">Connect &amp; load tracker</button>
+    <details>
+      <summary>First time? 4-step setup guide (≈4 min)</summary>
+      <ol>
+        <li>Go to <b>supabase.com</b> → sign in → <b>New project</b> (free). Pick any name + password, wait ~1 min for it to build.</li>
+        <li>Left sidebar → <b>SQL Editor</b> → New query → paste this and click <b>Run</b>:
+          <pre>create table if not exists tracker (
+  id text primary key,
+  data jsonb,
+  updated_at timestamptz default now()
+);
+alter table tracker enable row level security;
+create policy "team access" on tracker
+  for all using (true) with check (true);
+alter publication supabase_realtime add table tracker;</pre>
+        </li>
+        <li>Left sidebar → <b>Project Settings</b> → <b>API</b>. Copy the <b>Project URL</b> and the <b>anon public</b> key.</li>
+        <li>Paste both above → <b>Connect</b>. Then click <b>Copy invite link</b> in the header and send it to the team — they connect in one click. Pwedeng i-bookmark.</li>
+      </ol>
+    </details>
+  </div>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">
+      <span>Blazer2Role · SEO + AEO Tracker · Team Shared</span>
+      <span class="conn off" id="conn">Not connected</span>
+    </div>
+    <h1>Shared optimization tracker — live for the whole team</h1>
+    <p>Blog &amp; Pages, Platform &amp; Technical, and Recommended New Articles. Everyone sees the same data; edits auto-save and auto-sync across all teammates. Assign tasks, track index status per engine, and log backlinks.</p>
+    <div class="who">
+      <span class="lbl">You are:</span>
+      <input id="me-name" placeholder="Your name (e.g. Michael)" autocomplete="off">
+      <button class="btn ghost" id="invite" style="border-color:rgba(255,255,255,.3);color:#fff;font-size:12px;padding:6px 11px;">Copy invite link</button>
+      <button class="btn ghost" id="reconfig" style="border-color:rgba(255,255,255,.3);color:#fff;font-size:12px;padding:6px 11px;">Change DB</button>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="n" id="s-blogs">—</div><div class="l">Blog posts</div></div>
+      <div class="stat"><div class="n" id="s-tech">—</div><div class="l">Platform + technical</div></div>
+      <div class="stat"><div class="n" id="s-newa">—</div><div class="l">New articles</div></div>
+      <div class="stat"><div class="n" id="s-doing">—</div><div class="l">In progress</div></div>
+      <div class="stat"><div class="n" id="s-done">—</div><div class="l">Done</div></div>
+      <div class="stat"><div class="n" id="s-pct">—</div><div class="l">% complete</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="wrap">
+    <button class="tab active" data-view="blogs">Blog &amp; Pages</button>
+    <button class="tab" data-view="tech">Platform &amp; Technical</button>
+    <button class="tab" data-view="newa">Recommended New Articles</button>
+    <button class="tab" data-view="play">Playbook</button>
+  </div>
+</div>
+
+<div class="toolbar" id="toolbar">
+  <div class="wrap">
+    <span class="label">Priority</span>
+    <div class="seg" id="filt-pri">
+      <button class="active" data-v="all">All</button>
+      <button data-v="P0">P0</button><button data-v="P1">P1</button><button data-v="P2">P2</button><button data-v="P3">P3</button>
+    </div>
+    <span class="label" id="ctx-label">Group</span>
+    <div class="seg" id="filt-ctx"></div>
+    <input class="search" id="search" placeholder="Search...">
+    <button class="btn" id="csv-dl">Download CSV</button>
+    <button class="btn ghost" id="refresh">Refresh</button>
+    <span class="save-pill" id="save-pill">Synced ✓</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="legend" id="legend">
+    <span><b>P0</b> critical / quick win</span><span><b>P1</b> indexing + authority</span>
+    <span><b>P2</b> content + platform</span><span><b>P3</b> deferred / decision</span>
+    <span style="margin-left:auto;"><b>Group:</b> <span class="grp gA">A</span> blog <span class="grp gB">B</span> money page <span class="grp gC">C</span> test post — remove</span>
+  </div>
+  <div class="opt-note" id="opt-note"></div>
+
+  <div id="view-blogs">
+    <div class="table-wrap"><table class="blogs">
+      <thead><tr><th>#</th><th>Blog / Asset title</th><th>URL slug</th><th>Group</th><th>Index (G / Bing / Yandex)</th><th>Backlinks</th><th>Has kw?</th><th>Reason</th><th>Task</th><th>How-to</th><th>Keyword</th><th>Assignee</th><th>Notes</th><th>Pri</th><th>Status</th></tr></thead>
+      <tbody id="tb-blogs"></tbody>
+    </table></div>
+  </div>
+
+  <div id="view-tech" class="hidden">
+    <div class="table-wrap"><table class="tech">
+      <thead><tr><th>#</th><th>Asset / page</th><th>Type</th><th>Issue</th><th>Task</th><th>Keyword</th><th>Assignee</th><th>Notes</th><th>Pri</th><th>Status</th></tr></thead>
+      <tbody id="tb-tech"></tbody>
+    </table></div>
+  </div>
+
+  <div id="view-newa" class="hidden">
+    <div style="margin:0 0 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn" id="add-topic">+ Add topic</button>
+      <span class="small" style="color:var(--muted);">Add, edit, delete proposed articles. Index + backlinks tracked once published. Auto-synced.</span>
+    </div>
+    <div class="table-wrap"><table class="newa">
+      <thead><tr><th>#</th><th>Proposed title</th><th>Keyword</th><th>Intent</th><th>Index (G / Bing / Yandex)</th><th>Backlinks</th><th>Why / opportunity</th><th>Assignee</th><th>Notes</th><th>Created</th><th>Updated</th><th>Target</th><th>Pri</th><th>Status</th><th></th></tr></thead>
+      <tbody id="tb-newa"></tbody>
+    </table></div>
+  </div>
+
+  <div id="view-play" class="hidden"></div>
+</div>
+
+<footer><div class="wrap">
+  <p style="max-width:84ch;">Shared via Supabase. All edits auto-save to one database and sync to every teammate in real time. Export CSV anytime for a snapshot. No SEO method guarantees a #1 ranking or AI citation — the goal is doing the right things consistently. This SPA has no redirect layer: every published slug is permanent.</p>
+</div></footer>
+
+<script>
+/* ============ STATIC SEED DATA (defaults; live edits live in Supabase) ============ */
+const BLOGS=[
+ {"id": "A1", "title": "Career Change to Tech (HUB — not yet written)", "slug": "/blog/career-change-to-tech", "grp": "A", "idx": "Not built", "idxc": "no", "haskw": "Planned", "hc": "partial", "reason": "NO HUB CONFIRMED. Every article published before this is provisionally orphaned.", "task": "Write the hub first (v4.7 prompt). Links down to every spoke; spokes link up with the pillar keyword as anchor.", "kw": "career change to tech", "pri": "P0"},
+ {"id": "A2", "title": "Salesforce Resume (HUB #2 — not yet written)", "slug": "/blog/salesforce-resume", "grp": "A", "idx": "Not built", "idxc": "no", "haskw": "Planned", "hc": "partial", "reason": "Second hub for the Salesforce resume cluster (v4.7 PART 15).", "task": "Write after hub #1. Pair with a video twin — AI Overviews cite YouTube for resume queries.", "kw": "salesforce resume", "pri": "P1"},
+ {"id": "A3", "title": "90-Day Career Change Plan", "slug": "/blog/90-day-career-change-plan", "grp": "A", "idx": "Draft (file only)", "idxc": "warn", "haskw": "Yes (drafted); not live", "hc": "partial", "reason": "Draft + schema + editor fields exist in Desktop\\FOLDER\\blazer2role. Not published.", "task": "Publish via New Post form (Title + Slug first — slug is permanent). Run P.4 live check. CTA: Launch Package.", "kw": "90 day career change plan", "pri": "P0"},
+ {"id": "A4", "title": "Salesforce Certification Cost", "slug": "/blog/salesforce-certification-cost", "grp": "A", "idx": "Draft (file only)", "idxc": "warn", "haskw": "Yes (drafted); not live", "hc": "partial", "reason": "Draft in v4_7 folder. Citation-franchise page type (what it really costs / does not include).", "task": "Re-verify fees on publish day, publish, live check. CTA: Certification Track.", "kw": "salesforce certification cost", "pri": "P0"},
+ {"id": "C1", "title": "TEST POST: Bathroom Renovations in Kanata…", "slug": "/blog/bathroom-renovations-in-kanata-which-decade-is-your-bathroom-from-2026-local-guide", "grp": "C", "idx": "Live + in sitemap", "idxc": "warn", "haskw": "Off-topic", "hc": "no", "reason": "Off-niche test post live on blazer2role.com and in sitemap.xml. BLOCKER for topical authority.", "task": "Unpublish/delete, confirm it leaves the sitemap, request removal in GSC.", "kw": "None", "pri": "P0"},
+ {"id": "C2", "title": "TEST POST: How Restaurants Track NPS…", "slug": "/blog/how-restaurants-track-nps-across-multiple-branches-in-2026", "grp": "C", "idx": "Live + in sitemap", "idxc": "warn", "haskw": "Off-topic", "hc": "no", "reason": "Off-niche test post live and in sitemap.xml. BLOCKER.", "task": "Unpublish/delete, confirm it leaves the sitemap, request removal in GSC.", "kw": "None", "pri": "P0"},
+ {"id": "M1", "title": "Home", "slug": "/", "grp": "B", "idx": "Indexed", "idxc": "ok", "haskw": "Yes", "hc": "yes", "reason": "Money page. Landing testimonials need a consent record (D6).", "task": "Dedric: confirm written consent on file for each testimonial.", "kw": "career change to tech program", "pri": "P1"},
+ {"id": "M2", "title": "Pricing", "slug": "/pricing", "grp": "B", "idx": "Indexed", "idxc": "ok", "haskw": "Yes", "hc": "yes", "reason": "Owns all transactional queries — blog spokes must never chase these.", "task": "On any price change: re-verify every article naming a tier the same day.", "kw": "blazer2role pricing", "pri": "P2"},
+ {"id": "M3", "title": "Courses", "slug": "/courses", "grp": "B", "idx": "Indexed", "idxc": "ok", "haskw": "Yes", "hc": "yes", "reason": "'Sample: Blazer2Role Test Course' may still be visible (S4).", "task": "Remove the sample course if still visible.", "kw": "salesforce ai agentforce course", "pri": "P1"},
+ {"id": "M4", "title": "About", "slug": "/about", "grp": "B", "idx": "Indexed", "idxc": "ok", "haskw": "Yes", "hc": "yes", "reason": "Counters read $0M+ and 0 to crawlers (S3). Current-employer conflict (D5).", "task": "Fix or delete the counter row. Dedric picks current role; until then never name an employer.", "kw": "dedric brown salesforce", "pri": "P1"}
+];
+const TECH=[
+ {"id": "DEV1", "asset": "Blog posts (platform)", "type": "Schema", "issue": "BlogPosting author = Organization. No Person node.", "task": "author -> {@id: https://blazer2role.com/#dedric}; include personNode() in @graph.", "kw": "None", "pri": "P0"},
+ {"id": "DEV2", "asset": "Organization node", "type": "Schema", "issue": "No logo, sameAs, areaServed.", "task": "Add logo, sameAs (YouTube, Instagram, TikTok, Facebook), areaServed United States.", "kw": "None", "pri": "P1"},
+ {"id": "DEV3", "asset": "Blog posts (platform)", "type": "Schema", "issue": "No FAQPage; body cannot carry JSON-LD.", "task": "Generate FAQPage from body: each <h3> inside #faq = Question, next <p> = Answer.", "kw": "all FAQ queries", "pri": "P0"},
+ {"id": "DEV4", "asset": "Blog posts (platform)", "type": "Schema", "issue": "No BreadcrumbList.", "task": "Home > Blog > Title.", "kw": "None", "pri": "P1"},
+ {"id": "DEV5", "asset": "blogSanitize.ts", "type": "Platform", "issue": "<caption> is stripped from tables.", "task": "Add 'caption' to both sanitizer allowlists.", "kw": "None", "pri": "P2"},
+ {"id": "DEV6", "asset": "blogSanitize.ts", "type": "Platform", "issue": "Every external link forced to nofollow, authorities included.", "task": "Authority allowlist (trailhead/help.salesforce.com, bls.gov, onetonline.org, careeronestop.org, dol.gov) keeps noopener noreferrer without nofollow.", "kw": "None", "pri": "P2"},
+ {"id": "DEV7", "asset": "Blog post model", "type": "Platform", "issue": "dateModified = updatedAt, moves on every save.", "task": "Optional 'last reviewed' date field shown on the post.", "kw": "None", "pri": "P3"},
+ {"id": "S2", "asset": "/privacy + /terms", "type": "Site", "issue": "Still show support@blazer2rolentech.com.", "task": "Correct to support@blazer2role.com.", "kw": "None", "pri": "P1"},
+ {"id": "D3", "asset": "Author headshot", "type": "Site", "issue": "No permanent public URL for Dedric's headshot.", "task": "Dedric: provide headshot; host at a permanent URL for Person schema.", "kw": "None", "pri": "P1"},
+ {"id": "D4", "asset": "Certificate verification", "type": "Site", "issue": "Public verification URL pattern not confirmed.", "task": "Confirm pattern so articles can link a real example.", "kw": "None", "pri": "P2"},
+ {"id": "F3", "asset": "personNode()", "type": "Schema", "issue": "Uses alumniOf for employers (meant for schools).", "task": "Switch to worksFor history or drop it.", "kw": "None", "pri": "P3"},
+ {"id": "T1", "asset": "AI citation log", "type": "Site", "issue": "blazer2role-ai-citations.csv not started.", "task": "Start on first publish: date, engine, prompt, cited Y/N, position/share.", "kw": "None", "pri": "P2"}
+];
+const NEWA_SEED=[
+ {"id": "N01", "title": "New article topic (run the v4.7 Cannibalization Gate first)", "kw": "", "cat": "Guide", "intent": "Guide", "why": "Each spoke owns one distinct long-tail AND one distinct buyer question. Never target a hub head term or a /pricing query.", "pri": "P2"}
+];
+
+/* ============ STATE ============ */
+const SNEXT={todo:"doing",doing:"done",done:"todo"};
+const SLABEL={todo:"Not started",doing:"In progress",done:"Done"};
+const ASSIGNEES=["—","Mark","Dedric","VA"];
+function blankIdx(){return {g:{s:"not",d:""},bing:{s:"not",d:""},yandex:{s:"not",d:""},blBuilt:"",blTarget:"",blType:""};}
+function blankRow(seedIdxc){
+  let g="not"; if(seedIdxc==="ok"||seedIdxc==="leg")g="idx"; else if(seedIdxc==="warn")g="sub";
+  const r=blankIdx(); r.g.s=g; r.note=""; r.assignee="—"; r.status="todo"; r.by=""; return r;
+}
+// live, mergeable state object stored as a single Supabase row
+let STATE={rows:{}, newa:[], v:1};
+let view="blogs", fPri="all", fCtx="all", fQ="", me="";
+let sb=null, channel=null, suspendPush=false;
+
+function seedState(){
+  const rows={};
+  BLOGS.forEach(d=>rows[d.id]=blankRow(d.idxc));
+  TECH.forEach(d=>rows[d.id]={note:"",assignee:"—",status:"todo",by:""});
+  const newa=NEWA_SEED.map(d=>Object.assign({},d,{created:"",updated:"",target:""}));
+  newa.forEach(d=>rows[d.id]=Object.assign(blankIdx(),{note:"",assignee:"—",status:"todo",by:""}));
+  return {rows,newa,v:1};
+}
+
+/* ============ SUPABASE ============ */
+const LS_URL="b2r_sb_url", LS_KEY="b2r_sb_key", LS_ME="b2r_me";
+function showSetup(show,err){
+  document.getElementById("setup-ov").style.display=show?"flex":"none";
+  const e=document.getElementById("su-err"); if(err){e.textContent=err;e.classList.add("show");} else e.classList.remove("show");
+}
+function setConn(state,txt){const c=document.getElementById("conn");c.className="conn "+state;c.textContent=txt;}
+
+async function connect(url,key){
+  try{
+    sb=supabase.createClient(url,key);
+    // ensure row exists / load it
+    let {data,error}=await sb.from("tracker").select("data").eq("id","main").maybeSingle();
+    if(error) throw error;
+    if(!data){
+      STATE=seedState();
+      const ins=await sb.from("tracker").insert({id:"main",data:STATE});
+      if(ins.error) throw ins.error;
+    } else {
+      STATE=mergeWithSeed(data.data);
+    }
+    localStorage.setItem(LS_URL,url); localStorage.setItem(LS_KEY,key);
+    setConn("on","Live · synced");
+    showSetup(false);
+    subscribeLive();
+    buildCtx(); render(); counts(); buildPlaybook();
+    return true;
+  }catch(e){
+    console.error(e); showSetup(true,"Couldn't connect: "+(e.message||e)+". Check the URL/key and that you ran the SQL setup.");
+    setConn("off","Not connected"); return false;
+  }
+}
+// make sure new seed items (added later) appear even on old saved data
+function mergeWithSeed(saved){
+  const base=seedState();
+  const out={rows:Object.assign({},base.rows,(saved&&saved.rows)||{}), newa:(saved&&saved.newa)||base.newa, v:1};
+  // guarantee every blog/tech id has a row
+  BLOGS.concat(TECH).forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=base.rows[d.id];});
+  out.newa.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=Object.assign(blankIdx(),{note:"",assignee:"—",status:"todo",by:""});});
+  return out;
+}
+function subscribeLive(){
+  if(channel) sb.removeChannel(channel);
+  channel=sb.channel("tracker-live")
+    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"tracker",filter:"id=eq.main"},payload=>{
+      if(payload.new&&payload.new.data){ suspendPush=true; STATE=mergeWithSeed(payload.new.data); render(); counts(); suspendPush=false;
+        const p=document.getElementById("save-pill");p.textContent="Updated by teammate ✓";p.classList.add("show");setTimeout(()=>p.classList.remove("show"),1600);
+      }
+    }).subscribe();
+}
+let pushTimer=null;
+function push(){
+  if(!sb||suspendPush) return;
+  setConn("sync","Saving…");
+  clearTimeout(pushTimer);
+  pushTimer=setTimeout(async()=>{
+    try{
+      const {error}=await sb.from("tracker").update({data:STATE,updated_at:new Date().toISOString()}).eq("id","main");
+      if(error) throw error;
+      setConn("on","Live · synced");
+      const p=document.getElementById("save-pill");p.textContent="Synced ✓";p.classList.add("show");setTimeout(()=>p.classList.remove("show"),1300);
+    }catch(e){console.error(e);setConn("off","Save failed");}
+  },450);
+}
+
+/* ============ RENDER ============ */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function R(id){return STATE.rows[id]||{};}
+const CTX={
+  blogs:{label:"Group",opts:["all","A","B","C"],field:"grp"},
+  tech:{label:"Type",opts:["all","Schema","Platform","Site"],field:"type"},
+  newa:{label:"Category",opts:["all","Commercial","Guide"],field:"cat"}
+};
+const NOTE={
+  blogs:"Set each engine (Google / Bing / Yandex) to Indexed, Submitted, Not indexed or Error with the date you submitted in GSC / Bing Webmaster / Yandex Webmaster. Track backlinks built vs target + type. Assign a teammate, drop notes, flip status. Everything auto-syncs to the team.",
+  tech:"Platform (Replit app) and site-level fixes from the v4.7 prompt: DEV1–7 schema/sanitizer gaps plus standing client tasks. P0 = author + FAQ schema.",
+  newa:"Topics not yet created. Index + backlinks track once published. Add, edit, delete freely; auto-synced to the team."
+};
+function buildCtx(){
+  const c=CTX[view];const box=document.getElementById("filt-ctx");
+  document.getElementById("ctx-label").textContent=c.label;box.innerHTML="";
+  c.opts.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v==="all"?"All":v;b.dataset.v=v;if(i===0)b.classList.add("active");
+    b.onclick=()=>{box.querySelectorAll("button").forEach(x=>x.classList.remove("active"));b.classList.add("active");fCtx=v;render();};box.appendChild(b);});
+  fCtx="all"; document.getElementById("opt-note").textContent=NOTE[view];
+}
+function match(d,fields){
+  if(fPri!=="all"&&d.pri!==fPri)return false;
+  if(fCtx!=="all"&&String(d[CTX[view].field]||"").indexOf(fCtx)<0)return false;
+  if(fQ){const h=fields.map(f=>d[f]||"").join(" ").toLowerCase();if(h.indexOf(fQ)<0)return false;}
+  return true;
+}
+const IDXOPTS=[["idx","Indexed"],["not","Not indexed"],["sub","Submitted"],["err","Error"]];
+const SCLASS={idx:"s-idx",not:"s-no",sub:"s-sub",err:"s-err"};
+const ILAB={idx:"Indexed",not:"Not indexed",sub:"Submitted",err:"Error"};
+function engRow(id,eng,label){
+  const e=(R(id)[eng])||{s:"not",d:""};
+  const opts=IDXOPTS.map(o=>'<option value="'+o[0]+'"'+(e.s===o[0]?' selected':'')+'>'+o[1]+'</option>').join("");
+  return '<div class="idx-eng"><span class="e">'+label+'</span><select class="idx-sel '+SCLASS[e.s]+'" data-id="'+id+'" data-eng="'+eng+'">'+opts+'</select><input class="idx-date" type="text" placeholder="date" value="'+esc(e.d||"")+'" data-id="'+id+'" data-eng="'+eng+'"></div>';
+}
+function idxCell(id){return '<td class="idx-cell">'+engRow(id,"g","Goog")+engRow(id,"bing","Bing")+engRow(id,"yandex","Yndx")+'</td>';}
+function blCell(id){const e=R(id);return '<td class="bl-cell"><div class="bl-row"><span class="lab">Built</span><input class="bl-num" data-id="'+id+'" data-f="blBuilt" value="'+esc(e.blBuilt||"")+'" placeholder="0"></div><div class="bl-row"><span class="lab">Target</span><input class="bl-num" data-id="'+id+'" data-f="blTarget" value="'+esc(e.blTarget||"")+'" placeholder="0"></div><div class="bl-row"><span class="lab">Type</span><input class="bl-type" data-id="'+id+'" data-f="blType" value="'+esc(e.blType||"")+'" placeholder="Directory, guest..."></div></td>';}
+function noteCell(id){return '<td><textarea class="note" data-id="'+id+'" data-f="note" placeholder="Team notes...">'+esc(R(id).note||"")+'</textarea></td>';}
+function assigneeCell(id){const cur=R(id).assignee||"—";const by=R(id).by||"";
+  return '<td><select class="assignee" data-id="'+id+'" data-f="assignee">'+ASSIGNEES.map(a=>'<option'+(cur===a?' selected':'')+'>'+a+'</option>').join("")+'</select>'+(by?'<div class="by">'+esc(by)+'</div>':'')+'</td>';}
+function sbtn(id){const st=R(id).status||"todo";return '<button class="status-btn '+st+'" data-id="'+id+'">'+SLABEL[st]+'</button>';}
+
+const FLOW={
+ indexed:{label:"Indexed — on-page optimization only",steps:["Copy current title tag + meta into a doc (before/after).","Confirm target keyword. Once each in title, meta, H1; 8–12× naturally in body — never force.","Add an answer box: 2–3 sentence direct answer under the H1 (AI engines quote this).","Add/fix FAQ schema: 3–5 real questions, 40–60 word answers, ONE valid FAQPage block.","Add internal links: up to the hub + across to 2–3 related posts, descriptive anchors.","Add product link(s) where helpful. One clear CTA.","Fill the empty tags with 3–5 relevant terms.","Request indexing in Google Search Console (URL Inspection).","Log here: set index dropdowns + dates, notes, move Status to Done."]},
+ notindexed:{label:"NOT indexed — fix crawling first",steps:["Don't optimize yet — fix discovery first. Usual cause: no internal links.","Add internal links FROM indexed pages (hub + 2–3 related) TO this page.","Confirm it's in the sitemap.","Make sure it's not noindex / not blocked in robots.txt.","GSC → URL Inspection → Request indexing. Same in Bing + Yandex Webmaster.","Wait 3–7 days, re-inspect; set dropdowns + dates here.","Then do the full on-page pass like the Indexed workflow.","Log everything."]},
+ hidden:{label:"Hidden draft — publish first",steps:["Article written but not live / not in sitemap.","Review for accuracy + brand voice, then publish.","Add to the sitemap.","Internal-link from the relevant hub + 1–2 related posts.","Request indexing in Google, Bing, Yandex.","Run the standard on-page pass.","Log dropdowns, dates, notes, status."]},
+ legacy:{label:"Legacy post — audit then keep / merge / redirect",steps:["Audit in GSC: does it get clicks/impressions or hold backlinks? Don't delete blindly.","Decide: (a) KEEP & refresh, (b) MERGE into a stronger post, (c) 301-REDIRECT if thin.","If KEEPING: add meta title + description (these have none), keyword in H1/body, internal links, tags.","If MERGING: move best unique content into stronger post, then 301-redirect old URL.","If REDIRECTING: 301 (never a 404) to the closest relevant page.","Write the decision in Notes; set Status."]},
+ verify:{label:"Verify status first",steps:["Index/link status unclear — confirm first.","Check GSC (Pages + URL Inspection): indexed? getting impressions?","Check if orphaned; if so add internal links.","If thin: noindex or consolidate.","If worth keeping: standard on-page pass + cross-link.","Record findings in Notes; set dropdowns + status."]}
+};
+function flowFor(d){if(d.idxc==="no")return FLOW.notindexed;if(String(d.idx).toLowerCase().indexOf("hidden")>=0)return FLOW.hidden;if(d.idxc==="leg")return FLOW.legacy;if(d.idxc==="warn")return d.grp==="C"?FLOW.verify:FLOW.indexed;return FLOW.indexed;}
+
+function render(){
+  if(view==="blogs"){
+    const tb=document.getElementById("tb-blogs");tb.innerHTML="";
+    BLOGS.filter(d=>match(d,["id","title","slug","reason","task","kw"])).forEach(d=>{
+      const st=R(d.id).status||"todo";const tr=document.createElement("tr");if(st==="done")tr.className="done";
+      tr.innerHTML='<td class="id">'+d.id+'</td><td class="title">'+esc(d.title)+'</td><td class="slug">'+esc(d.slug)+'</td><td><span class="grp g'+d.grp+'">'+d.grp+'</span></td>'+idxCell(d.id)+blCell(d.id)+'<td class="haskw '+d.hc+'">'+esc(d.haskw)+'</td><td class="reason">'+esc(d.reason)+'</td><td class="task">'+esc(d.task)+'</td><td><button class="how-btn" data-how="'+d.id+'">Steps ↓</button></td><td class="kw">'+esc(d.kw)+'</td>'+assigneeCell(d.id)+noteCell(d.id)+'<td><span class="pill p'+d.pri+'">'+d.pri+'</span></td><td>'+sbtn(d.id)+'</td>';
+      tb.appendChild(tr);
+      const f=flowFor(d);const hr=document.createElement("tr");hr.className="how-row hidden";hr.dataset.howrow=d.id;
+      hr.innerHTML='<td colspan="15"><div class="how-inner"><h4>'+esc(d.title)+'</h4><div class="ctx">'+esc(f.label)+'</div><ol>'+f.steps.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol></div></td>';
+      tb.appendChild(hr);
+    });
+  } else if(view==="tech"){
+    const tb=document.getElementById("tb-tech");tb.innerHTML="";
+    TECH.filter(d=>match(d,["id","asset","issue","task","kw"])).forEach(d=>{
+      const st=R(d.id).status||"todo";const tr=document.createElement("tr");if(st==="done")tr.className="done";
+      tr.innerHTML='<td class="id">'+d.id+'</td><td class="asset">'+esc(d.asset)+'</td><td class="type">'+esc(d.type)+'</td><td class="issue">'+esc(d.issue)+'</td><td class="task">'+esc(d.task)+'</td><td class="kw">'+esc(d.kw)+'</td>'+assigneeCell(d.id)+noteCell(d.id)+'<td><span class="pill p'+d.pri+'">'+d.pri+'</span></td><td>'+sbtn(d.id)+'</td>';
+      tb.appendChild(tr);
+    });
+  } else if(view==="newa"){
+    const tb=document.getElementById("tb-newa");tb.innerHTML="";
+    STATE.newa.filter(d=>match(d,["id","title","kw","intent","why"])).forEach(d=>{
+      const st=R(d.id).status||"todo";const tr=document.createElement("tr");if(st==="done")tr.className="done";
+      const intents=["Commercial","Question / AEO","Question / Value / AEO","Education / commercial","Budget-commercial","Trust / Warranty / decision","Problem-aware / commercial","Guide"];
+      const allInt=intents.concat(intents.indexOf(d.intent)<0?[d.intent]:[]).filter((v,i,a)=>a.indexOf(v)===i);
+      const intentSel='<select class="ed-sel na-f" data-id="'+d.id+'" data-f="intent">'+allInt.map(o=>'<option'+(d.intent===o?' selected':'')+'>'+esc(o)+'</option>').join("")+'</select>';
+      const priSel='<select class="ed-sel na-f" data-id="'+d.id+'" data-f="pri">'+["P0","P1","P2","P3"].map(o=>'<option'+(d.pri===o?' selected':'')+'>'+o+'</option>').join("")+'</select>';
+      tr.innerHTML='<td class="id">'+d.id+'</td><td><input class="ed title na-f" data-id="'+d.id+'" data-f="title" value="'+esc(d.title)+'"></td><td><input class="ed kw na-f" data-id="'+d.id+'" data-f="kw" value="'+esc(d.kw)+'"></td><td>'+intentSel+'</td>'+idxCell(d.id)+blCell(d.id)+'<td><input class="ed na-f" data-id="'+d.id+'" data-f="why" value="'+esc(d.why)+'"></td>'+assigneeCell(d.id)+noteCell(d.id)+'<td><input class="dt na-f" type="date" data-id="'+d.id+'" data-f="created" value="'+esc(d.created)+'"></td><td><input class="dt na-f" type="date" data-id="'+d.id+'" data-f="updated" value="'+esc(d.updated)+'"></td><td><input class="dt na-f" type="date" data-id="'+d.id+'" data-f="target" value="'+esc(d.target)+'"></td><td>'+priSel+'</td><td>'+sbtn(d.id)+'</td><td><button class="del-btn" data-del="'+d.id+'">×</button></td>';
+      tb.appendChild(tr);
+    });
+  }
+  // wire events
+  document.querySelectorAll(".status-btn").forEach(b=>b.onclick=()=>{const id=b.dataset.id;const r=R(id);r.status=SNEXT[r.status||"todo"];r.by=(r.status==="done"&&me)?("done by "+me):(r.by||"");render();counts();push();});
+  document.querySelectorAll(".how-btn").forEach(b=>b.onclick=()=>{const row=document.querySelector('tr[data-howrow="'+b.dataset.how+'"]');if(row){const open=row.classList.toggle("hidden")===false;b.innerHTML=open?"Hide ↑":"Steps ↓";}});
+  document.querySelectorAll("select.idx-sel").forEach(s=>s.onchange=()=>{const r=R(s.dataset.id);r[s.dataset.eng].s=s.value;s.className="idx-sel "+SCLASS[s.value];if(s.dataset.eng==="g")counts();push();});
+  document.querySelectorAll("input.idx-date").forEach(i=>i.onchange=()=>{R(i.dataset.id)[i.dataset.eng].d=i.value;push();});
+  document.querySelectorAll("input.bl-num,input.bl-type,textarea.note").forEach(el=>el.oninput=()=>{R(el.dataset.id)[el.dataset.f]=el.value;push();});
+  document.querySelectorAll("select.assignee").forEach(s=>s.onchange=()=>{R(s.dataset.id).assignee=s.value;push();});
+  document.querySelectorAll(".na-f").forEach(el=>{const h=()=>{const d=STATE.newa.find(x=>x.id===el.dataset.id);if(!d)return;d[el.dataset.f]=el.value;if(el.dataset.f!=="updated"){d.updated=new Date().toISOString().slice(0,10);}push();if(el.dataset.f==="updated")return;const u=document.querySelector('.na-f[data-id="'+d.id+'"][data-f="updated"]');if(u&&u.value!==d.updated)u.value=d.updated;};el.tagName==="SELECT"?el.onchange=h:el.oninput=h;});
+  document.querySelectorAll(".del-btn").forEach(b=>b.onclick=()=>{const id=b.dataset.del;const i=STATE.newa.findIndex(x=>x.id===id);if(i>=0){STATE.newa.splice(i,1);delete STATE.rows[id];render();counts();push();}});
+}
+function counts(){
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  const all=BLOGS.map(d=>d.id).concat(TECH.map(d=>d.id)).concat(STATE.newa.map(d=>d.id));
+  const done=all.filter(id=>(R(id).status)==="done").length;
+  const doing=all.filter(id=>(R(id).status)==="doing").length;
+  set("s-blogs",BLOGS.length);set("s-tech",TECH.length);set("s-newa",STATE.newa.length);
+  set("s-doing",doing);set("s-done",done);set("s-pct",all.length?Math.round(done/all.length*100)+"%":"0%");
+}
+function q(f){return '"'+String(f==null?"":f).replace(/"/g,'""')+'"';}
+function eng(id,k){const e=(R(id)[k])||{s:"not",d:""};return ILAB[e.s]+(e.d?" ("+e.d+")":"");}
+function csv(){
+  let rows=[];
+  if(view==="blogs"){
+    rows.push(["#","Title","Slug","Group","Google","Bing","Yandex","BL Built","BL Target","BL Type","Has KW","Reason","Task","Keyword","Assignee","Notes","Priority","Status"].join(","));
+    BLOGS.forEach(d=>{const r=R(d.id);rows.push([d.id,d.title,d.slug,d.grp,eng(d.id,"g"),eng(d.id,"bing"),eng(d.id,"yandex"),r.blBuilt,r.blTarget,r.blType,d.haskw,d.reason,d.task,d.kw,r.assignee,r.note,d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
+  } else if(view==="tech"){
+    rows.push(["#","Asset","Type","Issue","Task","Keyword","Assignee","Notes","Priority","Status"].join(","));
+    TECH.forEach(d=>{const r=R(d.id);rows.push([d.id,d.asset,d.type,d.issue,d.task,d.kw,r.assignee,r.note,d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
+  } else {
+    rows.push(["#","Title","Keyword","Intent","Google","Bing","Yandex","BL Built","BL Target","BL Type","Why","Assignee","Notes","Created","Updated","Target","Priority","Status"].join(","));
+    STATE.newa.forEach(d=>{const r=R(d.id);rows.push([d.id,d.title,d.kw,d.intent,eng(d.id,"g"),eng(d.id,"bing"),eng(d.id,"yandex"),r.blBuilt,r.blTarget,r.blType,d.why,r.assignee,r.note,d.created||"",d.updated||"",d.target||"",d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
+  }
+  return rows.join("\n");
+}
+
+/* ============ PLAYBOOK ============ */
+function buildPlaybook(){
+  const el=document.getElementById("view-play");if(!el)return;
+  const card=(b,t,w,body)=>'<div class="pb-card"><h3><span class="badge">'+b+'</span>'+esc(t)+'</h3>'+(w?'<div class="why">'+esc(w)+'</div>':'')+body+'</div>';
+  const ol=a=>'<ol>'+a.map(s=>'<li>'+s+'</li>').join("")+'</ol>';
+  const ul=a=>'<ul>'+a.map(s=>'<li>'+s+'</li>').join("")+'</ul>';
+  let h='<div class="pb"><div class="pb-intro"><b>Para sa team:</b> SEO = makita sa Google. AEO = ma-quote ng AI tools (ChatGPT, Perplexity, Google AI Overviews). Sundin lang ang steps in order. Bawat blog row may sariling <b>Steps ↓</b> button. Walang nag-gguarantee ng #1 — consistency ang panalo.</div>';
+  h+='<h2>1 · Vocabulary (5 min)</h2><div class="sub">Kung bago ka, basahin muna ito.</div>'+card("Terms","Salitang lagi mong makikita","",ul(["<b>Title tag</b> — clickable headline sa Google (~55–60 chars).","<b>Meta description</b> — 1–2 line summary sa ilalim (~150 chars).","<b>H1</b> — malaking headline sa page. Isa lang.","<b>Slug</b> — ang address, e.g. /blog/salesforce-certification-cost.","<b>Schema</b> — hidden code na nagsasabi sa Google kung ano ang content (FAQ, product...). Tumutulong sa rich results + AI citations.","<b>Internal link</b> — link mula sa page mo papunta sa ibang page mo.","<b>Backlink</b> — link mula sa <i>ibang website</i> papunta sa'yo. Vote of trust.","<b>Index</b> — nasa library na ng Google. Not indexed = invisible.","<b>Answer box</b> — maikling sagot na kinukuha ng engines sa taas."]));
+  h+='<h2>2 · Optimize ang ISANG blog (core loop)</h2>'+card("On-page","Standard on-page pass","Para sa indexed page na kailangang i-optimize.",ol(["<b>Confirm ang target keyword</b> mula sa Keyword column.","<b>I-search mo mismo sa Google</b> — tignan top 3 + 'People also ask'. Yan ang dapat ma-cover.","<b>Title tag</b>: keyword malapit sa harap, <60 chars, parang sagot.","<b>Meta description</b>: ~150 chars, keyword once, may reason to click (cost/timeline/cert).","<b>Answer box</b>: 2–3 sentence plain answer sa ilalim ng H1.","<b>Keyword placement</b>: H1 once, body 8–12× natural. Wag i-stuff.","<b>3–5 FAQs</b>, 40–60 word answers, isang FAQPage schema block.","<b>Internal links</b>: hub + 2–3 related + product kung helpful.","<b>Tags</b>: 3–5 terms (kasalukuyang empty).","<b>Request indexing</b> sa GSC.","<b>Log dito</b>: dropdowns + dates + notes + status."])+'<div class="tip"><b>AEO tip:</b> direct answer muna, tapos FAQs, tapos detail. Sumagot ka parang totoong tanong.</div>');
+  h+='<h2>3 · Indexing sa 3 engines</h2>'+card("Indexing","Submit + verify bawat engine","",ol(["<b>Google:</b> Search Console → URL Inspection → Request indexing. Set Google dropdown + date.","<b>Bing:</b> Bing Webmaster → Submit URL. Mahalaga sa AEO. Set Bing dropdown + date.","<b>Yandex:</b> Yandex Webmaster → Reindex. Set Yandex dropdown + date.","Ayaw mag-index after ~1 week? Check sitemap, noindex, robots.txt, internal links."])+'<div class="warn"><b>Common mistake:</b> wag i-optimize ang page na hindi pa indexed. Ayusin muna ang indexing.</div>');
+  h+='<h2>4 · Backlinks</h2>'+card("Backlinks","Beginner-safe strategies","Track built vs target + type sa bawat row.",ol(["<b>Directories</b> (start here): relevant + real listings. Type = Directory.","<b>Digital PR / data:</b> mag-publish ng original stat, i-pitch sa bloggers. Type = PR.","<b>Guest posts:</b> useful article sa related blog + 1 natural link. Type = Guest post.","<b>Unlinked mentions:</b> hanapin sites na bumanggit ng 'Blazer2Role' walang link, hingin ang link. Type = Mention reclaim.","<b>Podcasts / interviews:</b> i-pitch si Dedric sa career-change at Salesforce podcasts. Type = Podcast.","<b>Resource pages:</b> 'Salesforce career resources' — hingin ma-add kung bagay. Type = Resource."])+'<div class="warn"><b>Iwasan:</b> bili ng bulk links, link farms, PBN, spammy comments. Pwede ma-penalize.</div>');
+  h+='<h2>5 · Order (ano una)</h2>'+card("Order","Kung limited ang oras","",ol(["<b>P0:</b> burahin ang 2 test posts, i-publish ang 2 drafts, isulat ang hub, DEV1 + DEV3.","<b>P1:</b> hub + indexed commercial pages + simulang backlinks.","<b>P2:</b> platform fixes + bagong question articles.","<b>P3:</b> legacy cleanup + deferred.","Check GSC every 2 weeks; doblehin ang pages na umaakyat from page 2 to page 1."]));
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+/* ============ TAB + TOOLBAR WIRING ============ */
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");view=t.dataset.view;
+  ["blogs","tech","newa","play"].forEach(v=>document.getElementById("view-"+v).classList.toggle("hidden",view!==v));
+  const isData=view!=="play";
+  document.getElementById("toolbar").style.display=isData?"":"none";
+  document.getElementById("legend").style.display=isData?"":"none";
+  document.getElementById("opt-note").style.display=isData?"":"none";
+  if(view==="play")return;
+  document.querySelectorAll("#filt-pri button").forEach((b,i)=>b.classList.toggle("active",i===0));fPri="all";
+  buildCtx();render();
+});
+document.getElementById("filt-pri").onclick=e=>{if(e.target.dataset.v){document.querySelectorAll("#filt-pri button").forEach(b=>b.classList.remove("active"));e.target.classList.add("active");fPri=e.target.dataset.v;render();}};
+document.getElementById("search").oninput=e=>{fQ=e.target.value.toLowerCase().trim();render();};
+document.getElementById("add-topic").onclick=()=>{
+  let max=0;STATE.newa.forEach(d=>{const m=/^N0*(\d+)$/.exec(d.id);if(m)max=Math.max(max,+m[1]);});
+  const id="N"+String(max+1).padStart(2,"0");const t=new Date().toISOString().slice(0,10);
+  STATE.newa.push({id,title:"New article topic",kw:"",cat:"Commercial",intent:"Commercial",why:"",pri:"P2",created:t,updated:t,target:""});
+  STATE.rows[id]=Object.assign(blankIdx(),{note:"",assignee:"—",status:"todo",by:""});
+  fPri="all";fCtx="all";fQ="";document.getElementById("search").value="";
+  document.querySelectorAll("#filt-pri button").forEach((b,i)=>b.classList.toggle("active",i===0));
+  render();counts();push();
+  const tb=document.getElementById("tb-newa");const last=tb&&tb.lastElementChild;if(last){last.scrollIntoView({behavior:"smooth",block:"center"});const inp=last.querySelector("input.title");if(inp){inp.focus();inp.select();}}
+};
+document.getElementById("csv-dl").onclick=()=>{const blob=new Blob([csv()],{type:"text/csv;charset=utf-8;"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="blazer2role-"+view+".csv";a.click();};
+document.getElementById("refresh").onclick=async()=>{if(!sb)return;const {data}=await sb.from("tracker").select("data").eq("id","main").maybeSingle();if(data){STATE=mergeWithSeed(data.data);render();counts();}};
+document.getElementById("reconfig").onclick=()=>showSetup(true);
+document.getElementById("su-go").onclick=()=>{const u=document.getElementById("su-url").value.trim().replace(/\/$/,"");const k=document.getElementById("su-key").value.trim();if(!u||!k){showSetup(true,"Please fill in both fields.");return;}connect(u,k);};
+document.getElementById("invite").onclick=e=>{const u=localStorage.getItem(LS_URL),k=localStorage.getItem(LS_KEY);if(!u||!k)return;navigator.clipboard.writeText(location.origin+location.pathname+"#"+encodeURIComponent(u)+"|"+encodeURIComponent(k));e.target.textContent="Copied ✓";setTimeout(()=>e.target.textContent="Copy invite link",1500);};
+const meEl=document.getElementById("me-name");
+meEl.oninput=()=>{me=meEl.value.trim();localStorage.setItem(LS_ME,me);};
+
+/* ============ BOOT ============ */
+(function boot(){
+  me=localStorage.getItem(LS_ME)||"";meEl.value=me;
+  let u=localStorage.getItem(LS_URL),k=localStorage.getItem(LS_KEY);
+  const h=location.hash.slice(1).split("|");if(h.length===2){u=decodeURIComponent(h[0]);k=decodeURIComponent(h[1]);history.replaceState(null,"",location.pathname);}
+  // start hidden on playbook controls until connected
+  if(u&&k){document.getElementById("su-url").value=u;document.getElementById("su-key").value=k;connect(u,k);}
+  else {showSetup(true);}
+})();
+</script>
+</body>
+</html>
