@@ -48,7 +48,7 @@
   .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;}
   .table-wrap{overflow-x:auto;margin:20px 0 36px;border:1px solid var(--line);border-radius:14px;}
   table{width:100%;border-collapse:collapse;font-size:13px;}
-  table.blogs{min-width:1520px;} table.tech{min-width:1120px;} table.newa{min-width:1800px;}
+  table.blogs{min-width:1780px;} table.tech{min-width:1120px;} table.newa{min-width:1800px;}
   thead th{position:sticky;top:0;background:var(--dark);color:var(--paper);text-align:left;padding:11px 12px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
   tbody td{padding:12px 12px;border-top:1px solid var(--line);vertical-align:top;}
   tbody tr:nth-child(even) td{background:var(--card);}
@@ -113,6 +113,25 @@
   .opt-note{background:#fbf4e8;border:1px solid #ecdcb9;border-left:4px solid var(--gold);border-radius:10px;padding:14px 16px;margin:0 0 22px;font-size:13px;color:#5d5230;}
   footer{padding:24px 0 56px;color:var(--muted);font-size:12px;}
   .hidden{display:none;}
+  /* v2-multiclient */
+  body{padding-left:200px;}
+  .side{position:fixed;left:0;top:0;bottom:0;width:200px;background:var(--card);border-right:1px solid var(--line);padding:18px 12px;overflow:auto;z-index:6;}
+  .side .lbl{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:4px 8px 10px;}
+  .side button{display:block;width:100%;text-align:left;border:none;background:none;font:inherit;font-size:13.5px;color:var(--ink);padding:8px 10px;border-radius:9px;cursor:pointer;margin-bottom:2px;}
+  .side button:hover{background:var(--paper2);}
+  .side button.active{background:#e3efe6;color:#2f6b43;font-weight:700;}
+  .side button.add{border:1px dashed var(--line);color:var(--accent);font-weight:600;text-align:center;margin-top:10px;}
+  @media(max-width:900px){body{padding-left:0;}.side{position:static;width:auto;display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-right:none;border-bottom:1px solid var(--line);padding:10px 14px;}.side .lbl{margin:0 6px 0 0;}.side button{width:auto;margin:0;}.side button.add{margin:0;}}
+  .perf{min-width:215px;font-size:11px;line-height:1.5;}
+  .pf{white-space:nowrap;margin-bottom:3px;color:var(--muted);} .pf b{color:var(--ink);} .pf .e{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.04em;width:34px;text-transform:uppercase;}
+  .up{color:#2f6b43;font-weight:700;} .down{color:#a23a12;font-weight:700;}
+  .ai-chip{display:inline-block;font-size:10px;font-weight:700;border:1px solid var(--line);border-radius:20px;padding:1px 7px;margin:2px 3px 0 0;cursor:pointer;color:var(--muted);background:var(--card);}
+  .ai-chip.on{background:#e1efe5;color:#2f6b43;border-color:#bfdcc8;}
+  [contenteditable]{border-radius:5px;} [contenteditable]:hover{box-shadow:0 0 0 1px var(--line);} [contenteditable]:focus{outline:none;box-shadow:0 0 0 1px var(--accent);background:var(--card);}
+  .row-actions{margin:0 0 -6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  table.rank{min-width:900px;} table.rank td.num,table.rank th.num{text-align:right;white-space:nowrap;}
+  .rank-h{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin:26px 0 4px;}
+  tr.click{cursor:pointer;} tr.click:hover td{background:var(--paper2);}
   /* setup modal */
   .ov{position:fixed;inset:0;background:rgba(16,17,15,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;}
   .setup{background:var(--paper);border-radius:18px;max-width:600px;width:100%;padding:30px 32px;max-height:90vh;overflow:auto;}
@@ -148,6 +167,7 @@
 </style>
 </head>
 <body>
+<nav class="side" id="side"></nav>
 
 <!-- ===== SETUP MODAL ===== -->
 <div class="ov" id="setup-ov">
@@ -185,7 +205,7 @@ alter publication supabase_realtime add table tracker;</pre>
 <header>
   <div class="wrap">
     <div class="kicker">
-      <span>Blazer2Role · SEO + AEO Tracker · Team Shared</span>
+      <span><span id="brand">Blazer2Role</span> · SEO + AEO Tracker · Team Shared</span>
       <span class="conn off" id="conn">Not connected</span>
     </div>
     <h1>Shared optimization tracker — live for the whole team</h1>
@@ -212,6 +232,7 @@ alter publication supabase_realtime add table tracker;</pre>
     <button class="tab active" data-view="blogs">Blog &amp; Pages</button>
     <button class="tab" data-view="tech">Platform &amp; Technical</button>
     <button class="tab" data-view="newa">Recommended New Articles</button>
+    <button class="tab" data-view="rank">Who's Ranking</button>
     <button class="tab" data-view="play">Playbook</button>
   </div>
 </div>
@@ -225,6 +246,8 @@ alter publication supabase_realtime add table tracker;</pre>
     </div>
     <span class="label" id="ctx-label">Group</span>
     <div class="seg" id="filt-ctx"></div>
+    <span class="label">Assignee</span>
+    <select class="ed-sel" id="filt-as"></select>
     <input class="search" id="search" placeholder="Search...">
     <button class="btn" id="csv-dl">Download CSV</button>
     <button class="btn ghost" id="refresh">Refresh</button>
@@ -241,15 +264,23 @@ alter publication supabase_realtime add table tracker;</pre>
   <div class="opt-note" id="opt-note"></div>
 
   <div id="view-blogs">
+    <div class="row-actions">
+      <button class="btn" id="add-blog">+ Add blog / page</button>
+      <button class="btn ghost" id="imp-g">Import Google (GSC) CSV</button>
+      <button class="btn ghost" id="imp-b">Import Bing CSV</button>
+      <input type="file" id="imp-file" accept=".csv,.tsv,.txt" class="hidden">
+      <span class="small" id="imp-msg" style="max-width:none;">GSC → Performance → Pages → Export CSV. Bing Webmaster → Search Performance → Pages → Export. Rows match by URL slug. Click any text cell to edit.</span>
+    </div>
     <div class="table-wrap"><table class="blogs">
-      <thead><tr><th>#</th><th>Blog / Asset title</th><th>URL slug</th><th>Group</th><th>Index (G / Bing / Yandex)</th><th>Backlinks</th><th>Has kw?</th><th>Reason</th><th>Task</th><th>How-to</th><th>Keyword</th><th>Assignee</th><th>Notes</th><th>Pri</th><th>Status</th></tr></thead>
+      <thead><tr><th>#</th><th>Blog / Asset title</th><th>URL slug</th><th>Group</th><th>Index (G / Bing / Yandex)</th><th>Backlinks</th><th>Performance · 28d (Google / Bing / AI cited)</th><th>Has kw?</th><th>Reason</th><th>Task</th><th>How-to</th><th>Keyword</th><th>Assignee</th><th>Notes</th><th>Pri</th><th>Status</th><th></th></tr></thead>
       <tbody id="tb-blogs"></tbody>
     </table></div>
   </div>
 
   <div id="view-tech" class="hidden">
+    <div class="row-actions"><button class="btn" id="add-tech">+ Add item</button><span class="small" style="max-width:none;">Click any text cell to edit.</span></div>
     <div class="table-wrap"><table class="tech">
-      <thead><tr><th>#</th><th>Asset / page</th><th>Type</th><th>Issue</th><th>Task</th><th>Keyword</th><th>Assignee</th><th>Notes</th><th>Pri</th><th>Status</th></tr></thead>
+      <thead><tr><th>#</th><th>Asset / page</th><th>Type</th><th>Issue</th><th>Task</th><th>Keyword</th><th>Assignee</th><th>Notes</th><th>Pri</th><th>Status</th><th></th></tr></thead>
       <tbody id="tb-tech"></tbody>
     </table></div>
   </div>
@@ -265,6 +296,8 @@ alter publication supabase_realtime add table tracker;</pre>
     </table></div>
   </div>
 
+  <div id="view-rank" class="hidden"></div>
+  <div id="view-all" class="hidden"></div>
   <div id="view-play" class="hidden"></div>
 </div>
 
@@ -314,17 +347,24 @@ function blankRow(seedIdxc){
   const r=blankIdx(); r.g.s=g; r.note=""; r.assignee="—"; r.status="todo"; r.by=""; return r;
 }
 // live, mergeable state object stored as a single Supabase row
-let STATE={rows:{}, newa:[], v:1};
+let STATE={rows:{}, blogs:[], tech:[], newa:[], v:2};
+let CLIENT="main", CLIENTS=[{id:"main",name:"Blazer2Role"}], CUR_U="", CUR_K="", fAs="all";
+try{CLIENT=localStorage.getItem("b2r_client")||"main";}catch(e){}
+const clone=o=>JSON.parse(JSON.stringify(o));
 let view="blogs", fPri="all", fCtx="all", fQ="", me="";
 let sb=null, channel=null, suspendPush=false;
 
+function blankMeta(){return {note:"",assignee:"—",status:"todo",by:""};}
 function seedState(){
+  // only Blazer2Role ('main') starts with seed rows; new clients start empty
+  const isMain=CLIENT==="main";
+  const blogs=isMain?clone(BLOGS):[], tech=isMain?clone(TECH):[];
+  const newa=isMain?NEWA_SEED.map(d=>Object.assign({},d,{created:"",updated:"",target:""})):[];
   const rows={};
-  BLOGS.forEach(d=>rows[d.id]=blankRow(d.idxc));
-  TECH.forEach(d=>rows[d.id]={note:"",assignee:"—",status:"todo",by:""});
-  const newa=NEWA_SEED.map(d=>Object.assign({},d,{created:"",updated:"",target:""}));
-  newa.forEach(d=>rows[d.id]=Object.assign(blankIdx(),{note:"",assignee:"—",status:"todo",by:""}));
-  return {rows,newa,v:1};
+  blogs.forEach(d=>rows[d.id]=blankRow(d.idxc));
+  tech.forEach(d=>rows[d.id]=blankMeta());
+  newa.forEach(d=>rows[d.id]=Object.assign(blankIdx(),blankMeta()));
+  return {rows,blogs,tech,newa,v:2};
 }
 
 /* ============ SUPABASE ============ */
@@ -337,13 +377,14 @@ function setConn(state,txt){const c=document.getElementById("conn");c.className=
 
 async function connect(url,key){
   try{
-    sb=supabase.createClient(url,key);
+    if(!sb||CUR_U!==url||CUR_K!==key) sb=supabase.createClient(url,key);
+    CUR_U=url;CUR_K=key;
     // ensure row exists / load it
-    let {data,error}=await sb.from("tracker").select("data").eq("id","main").maybeSingle();
+    let {data,error}=await sb.from("tracker").select("data").eq("id",CLIENT).maybeSingle();
     if(error) throw error;
     if(!data){
       STATE=seedState();
-      const ins=await sb.from("tracker").insert({id:"main",data:STATE});
+      const ins=await sb.from("tracker").insert({id:CLIENT,data:STATE});
       if(ins.error) throw ins.error;
     } else {
       STATE=mergeWithSeed(data.data);
@@ -351,8 +392,9 @@ async function connect(url,key){
     localStorage.setItem(LS_URL,url); localStorage.setItem(LS_KEY,key);
     setConn("on","Live · synced");
     showSetup(false);
+    await loadClients();
     subscribeLive();
-    buildCtx(); render(); counts(); buildPlaybook();
+    renderSide(); buildCtx(); render(); counts(); buildPlaybook();
     return true;
   }catch(e){
     console.error(e); showSetup(true,"Couldn't connect: "+(e.message||e)+". Check the URL/key and that you ran the SQL setup.");
@@ -361,17 +403,17 @@ async function connect(url,key){
 }
 // make sure new seed items (added later) appear even on old saved data
 function mergeWithSeed(saved){
-  const base=seedState();
-  const out={rows:Object.assign({},base.rows,(saved&&saved.rows)||{}), newa:(saved&&saved.newa)||base.newa, v:1};
-  // guarantee every blog/tech id has a row
-  BLOGS.concat(TECH).forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=base.rows[d.id];});
-  out.newa.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=Object.assign(blankIdx(),{note:"",assignee:"—",status:"todo",by:""});});
+  const base=seedState(); saved=saved||{};
+  const out={rows:Object.assign({},base.rows,saved.rows||{}), blogs:saved.blogs||base.blogs, tech:saved.tech||base.tech, newa:saved.newa||base.newa, v:2};
+  out.blogs.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=blankRow(d.idxc);});
+  out.tech.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=blankMeta();});
+  out.newa.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=Object.assign(blankIdx(),blankMeta());});
   return out;
 }
 function subscribeLive(){
   if(channel) sb.removeChannel(channel);
   channel=sb.channel("tracker-live")
-    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"tracker",filter:"id=eq.main"},payload=>{
+    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"tracker",filter:"id=eq."+CLIENT},payload=>{
       if(payload.new&&payload.new.data){ suspendPush=true; STATE=mergeWithSeed(payload.new.data); render(); counts(); suspendPush=false;
         const p=document.getElementById("save-pill");p.textContent="Updated by teammate ✓";p.classList.add("show");setTimeout(()=>p.classList.remove("show"),1600);
       }
@@ -384,7 +426,7 @@ function push(){
   clearTimeout(pushTimer);
   pushTimer=setTimeout(async()=>{
     try{
-      const {error}=await sb.from("tracker").update({data:STATE,updated_at:new Date().toISOString()}).eq("id","main");
+      const {error}=await sb.from("tracker").update({data:STATE,updated_at:new Date().toISOString()}).eq("id",CLIENT);
       if(error) throw error;
       setConn("on","Live · synced");
       const p=document.getElementById("save-pill");p.textContent="Synced ✓";p.classList.add("show");setTimeout(()=>p.classList.remove("show"),1300);
@@ -413,6 +455,7 @@ function buildCtx(){
   fCtx="all"; document.getElementById("opt-note").textContent=NOTE[view];
 }
 function match(d,fields){
+  if(fAs!=="all"&&(R(d.id).assignee||"—")!==fAs)return false;
   if(fPri!=="all"&&d.pri!==fPri)return false;
   if(fCtx!=="all"&&String(d[CTX[view].field]||"").indexOf(fCtx)<0)return false;
   if(fQ){const h=fields.map(f=>d[f]||"").join(" ").toLowerCase();if(h.indexOf(fQ)<0)return false;}
@@ -442,22 +485,33 @@ const FLOW={
 };
 function flowFor(d){if(d.idxc==="no")return FLOW.notindexed;if(String(d.idx).toLowerCase().indexOf("hidden")>=0)return FLOW.hidden;if(d.idxc==="leg")return FLOW.legacy;if(d.idxc==="warn")return d.grp==="C"?FLOW.verify:FLOW.indexed;return FLOW.indexed;}
 
+function edTd(arr,d,f,cls){return '<td class="'+cls+'"><div contenteditable="plaintext-only" class="cell-ed" data-arr="'+arr+'" data-id="'+d.id+'" data-f="'+f+'">'+esc(d[f])+'</div></td>';}
+function selCell(arr,d,f,opts){return '<select class="ed-sel row-sel" data-arr="'+arr+'" data-id="'+d.id+'" data-f="'+f+'">'+opts.map(o=>'<option'+(d[f]===o?' selected':'')+'>'+o+'</option>').join("")+'</select>';}
+const AIS=[["gpt","ChatGPT"],["pplx","Perplexity"],["gem","Gemini"],["aio","AI Overview"]];
+function mrow(id,k,lab){
+  const m=(R(id).m||{})[k]; if(!m) return '<div class="pf"><span class="e">'+lab+'</span> no data yet</div>';
+  const pv=(R(id).mp||{})[k]; const dl=(pv&&pv.p&&m.p)?(pv.p-m.p):0; // lower position = better, so positive delta = improved
+  const dh=Math.abs(dl)>=0.05?' <span class="'+(dl>0?'up':'down')+'">'+(dl>0?'▲':'▼')+Math.abs(dl).toFixed(1)+'</span>':'';
+  return '<div class="pf" title="Imported '+esc(m.at||"")+'"><span class="e">'+lab+'</span> <b>'+m.c+'</b> clicks · '+m.i+' impr · pos <b>'+(m.p?(+m.p).toFixed(1):"—")+'</b>'+dh+'</div>';
+}
+function perfCell(id){const ai=R(id).ai||{};return '<td class="perf">'+mrow(id,"g","Goog")+mrow(id,"b","Bing")+'<div>'+AIS.map(a=>'<span class="ai-chip'+(ai[a[0]]?' on':'')+'" data-id="'+id+'" data-ai="'+a[0]+'" title="Click when this blog is cited by '+a[1]+'">'+a[1]+'</span>').join("")+'</div></td>';}
 function render(){
+  if(view==="rank"){renderRank();return;} if(view==="all"){renderAll();return;}
   if(view==="blogs"){
     const tb=document.getElementById("tb-blogs");tb.innerHTML="";
-    BLOGS.filter(d=>match(d,["id","title","slug","reason","task","kw"])).forEach(d=>{
+    STATE.blogs.filter(d=>match(d,["id","title","slug","reason","task","kw"])).forEach(d=>{
       const st=R(d.id).status||"todo";const tr=document.createElement("tr");if(st==="done")tr.className="done";
-      tr.innerHTML='<td class="id">'+d.id+'</td><td class="title">'+esc(d.title)+'</td><td class="slug">'+esc(d.slug)+'</td><td><span class="grp g'+d.grp+'">'+d.grp+'</span></td>'+idxCell(d.id)+blCell(d.id)+'<td class="haskw '+d.hc+'">'+esc(d.haskw)+'</td><td class="reason">'+esc(d.reason)+'</td><td class="task">'+esc(d.task)+'</td><td><button class="how-btn" data-how="'+d.id+'">Steps ↓</button></td><td class="kw">'+esc(d.kw)+'</td>'+assigneeCell(d.id)+noteCell(d.id)+'<td><span class="pill p'+d.pri+'">'+d.pri+'</span></td><td>'+sbtn(d.id)+'</td>';
+      tr.innerHTML='<td class="id">'+esc(d.id)+'</td>'+edTd("blogs",d,"title","title")+edTd("blogs",d,"slug","slug")+'<td>'+selCell("blogs",d,"grp",["A","B","C"])+'</td>'+idxCell(d.id)+blCell(d.id)+perfCell(d.id)+edTd("blogs",d,"haskw","haskw "+(d.hc||""))+edTd("blogs",d,"reason","reason")+edTd("blogs",d,"task","task")+'<td><button class="how-btn" data-how="'+d.id+'">Steps ↓</button></td>'+edTd("blogs",d,"kw","kw")+assigneeCell(d.id)+noteCell(d.id)+'<td>'+selCell("blogs",d,"pri",["P0","P1","P2","P3"])+'</td><td>'+sbtn(d.id)+'</td><td><button class="del-btn" data-delrow="'+d.id+'" data-arr="blogs">×</button></td>';
       tb.appendChild(tr);
       const f=flowFor(d);const hr=document.createElement("tr");hr.className="how-row hidden";hr.dataset.howrow=d.id;
-      hr.innerHTML='<td colspan="15"><div class="how-inner"><h4>'+esc(d.title)+'</h4><div class="ctx">'+esc(f.label)+'</div><ol>'+f.steps.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol></div></td>';
+      hr.innerHTML='<td colspan="17"><div class="how-inner"><h4>'+esc(d.title)+'</h4><div class="ctx">'+esc(f.label)+'</div><ol>'+f.steps.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol></div></td>';
       tb.appendChild(hr);
     });
   } else if(view==="tech"){
     const tb=document.getElementById("tb-tech");tb.innerHTML="";
-    TECH.filter(d=>match(d,["id","asset","issue","task","kw"])).forEach(d=>{
+    STATE.tech.filter(d=>match(d,["id","asset","issue","task","kw"])).forEach(d=>{
       const st=R(d.id).status||"todo";const tr=document.createElement("tr");if(st==="done")tr.className="done";
-      tr.innerHTML='<td class="id">'+d.id+'</td><td class="asset">'+esc(d.asset)+'</td><td class="type">'+esc(d.type)+'</td><td class="issue">'+esc(d.issue)+'</td><td class="task">'+esc(d.task)+'</td><td class="kw">'+esc(d.kw)+'</td>'+assigneeCell(d.id)+noteCell(d.id)+'<td><span class="pill p'+d.pri+'">'+d.pri+'</span></td><td>'+sbtn(d.id)+'</td>';
+      tr.innerHTML='<td class="id">'+esc(d.id)+'</td>'+edTd("tech",d,"asset","asset")+edTd("tech",d,"type","type")+edTd("tech",d,"issue","issue")+edTd("tech",d,"task","task")+edTd("tech",d,"kw","kw")+assigneeCell(d.id)+noteCell(d.id)+'<td>'+selCell("tech",d,"pri",["P0","P1","P2","P3"])+'</td><td>'+sbtn(d.id)+'</td><td><button class="del-btn" data-delrow="'+d.id+'" data-arr="tech">×</button></td>';
       tb.appendChild(tr);
     });
   } else if(view==="newa"){
@@ -473,6 +527,10 @@ function render(){
     });
   }
   // wire events
+  document.querySelectorAll(".cell-ed").forEach(el=>el.onblur=()=>{const d=(STATE[el.dataset.arr]||[]).find(x=>x.id===el.dataset.id);if(!d)return;const v=el.textContent.trim();if(d[el.dataset.f]===v)return;d[el.dataset.f]=v;push();});
+  document.querySelectorAll(".row-sel").forEach(el=>el.onchange=()=>{const d=(STATE[el.dataset.arr]||[]).find(x=>x.id===el.dataset.id);if(!d)return;d[el.dataset.f]=el.value;render();push();});
+  document.querySelectorAll(".ai-chip").forEach(el=>el.onclick=()=>{const r=STATE.rows[el.dataset.id]=STATE.rows[el.dataset.id]||blankMeta();r.ai=r.ai||{};r.ai[el.dataset.ai]=!r.ai[el.dataset.ai];el.classList.toggle("on",r.ai[el.dataset.ai]);push();});
+  document.querySelectorAll("[data-delrow]").forEach(b=>b.onclick=()=>{const arr=STATE[b.dataset.arr];const i=arr.findIndex(x=>x.id===b.dataset.delrow);if(i<0||!confirm("Delete row "+b.dataset.delrow+"? This removes it for the whole team."))return;arr.splice(i,1);delete STATE.rows[b.dataset.delrow];render();counts();push();});
   document.querySelectorAll(".status-btn").forEach(b=>b.onclick=()=>{const id=b.dataset.id;const r=R(id);r.status=SNEXT[r.status||"todo"];r.by=(r.status==="done"&&me)?("done by "+me):(r.by||"");render();counts();push();});
   document.querySelectorAll(".how-btn").forEach(b=>b.onclick=()=>{const row=document.querySelector('tr[data-howrow="'+b.dataset.how+'"]');if(row){const open=row.classList.toggle("hidden")===false;b.innerHTML=open?"Hide ↑":"Steps ↓";}});
   document.querySelectorAll("select.idx-sel").forEach(s=>s.onchange=()=>{const r=R(s.dataset.id);r[s.dataset.eng].s=s.value;s.className="idx-sel "+SCLASS[s.value];if(s.dataset.eng==="g")counts();push();});
@@ -484,10 +542,10 @@ function render(){
 }
 function counts(){
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  const all=BLOGS.map(d=>d.id).concat(TECH.map(d=>d.id)).concat(STATE.newa.map(d=>d.id));
+  const all=STATE.blogs.map(d=>d.id).concat(STATE.tech.map(d=>d.id)).concat(STATE.newa.map(d=>d.id));
   const done=all.filter(id=>(R(id).status)==="done").length;
   const doing=all.filter(id=>(R(id).status)==="doing").length;
-  set("s-blogs",BLOGS.length);set("s-tech",TECH.length);set("s-newa",STATE.newa.length);
+  set("s-blogs",STATE.blogs.length);set("s-tech",STATE.tech.length);set("s-newa",STATE.newa.length);
   set("s-doing",doing);set("s-done",done);set("s-pct",all.length?Math.round(done/all.length*100)+"%":"0%");
 }
 function q(f){return '"'+String(f==null?"":f).replace(/"/g,'""')+'"';}
@@ -495,17 +553,97 @@ function eng(id,k){const e=(R(id)[k])||{s:"not",d:""};return ILAB[e.s]+(e.d?" ("
 function csv(){
   let rows=[];
   if(view==="blogs"){
-    rows.push(["#","Title","Slug","Group","Google","Bing","Yandex","BL Built","BL Target","BL Type","Has KW","Reason","Task","Keyword","Assignee","Notes","Priority","Status"].join(","));
-    BLOGS.forEach(d=>{const r=R(d.id);rows.push([d.id,d.title,d.slug,d.grp,eng(d.id,"g"),eng(d.id,"bing"),eng(d.id,"yandex"),r.blBuilt,r.blTarget,r.blType,d.haskw,d.reason,d.task,d.kw,r.assignee,r.note,d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
+    rows.push(["#","Title","Slug","Group","Google","Bing","Yandex","BL Built","BL Target","BL Type","G Clicks","G Impr","G Pos","Bing Clicks","Bing Impr","Bing Pos","AI cited","Has KW","Reason","Task","Keyword","Assignee","Notes","Priority","Status"].join(","));
+    STATE.blogs.forEach(d=>{const r=R(d.id);const t=tot(d.id);rows.push([d.id,d.title,d.slug,d.grp,eng(d.id,"g"),eng(d.id,"bing"),eng(d.id,"yandex"),r.blBuilt,r.blTarget,r.blType,t.g.c,t.g.i,t.g.p,t.b.c,t.b.i,t.b.p,t.aiNames,d.haskw,d.reason,d.task,d.kw,r.assignee,r.note,d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
   } else if(view==="tech"){
     rows.push(["#","Asset","Type","Issue","Task","Keyword","Assignee","Notes","Priority","Status"].join(","));
-    TECH.forEach(d=>{const r=R(d.id);rows.push([d.id,d.asset,d.type,d.issue,d.task,d.kw,r.assignee,r.note,d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
+    STATE.tech.forEach(d=>{const r=R(d.id);rows.push([d.id,d.asset,d.type,d.issue,d.task,d.kw,r.assignee,r.note,d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
   } else {
     rows.push(["#","Title","Keyword","Intent","Google","Bing","Yandex","BL Built","BL Target","BL Type","Why","Assignee","Notes","Created","Updated","Target","Priority","Status"].join(","));
     STATE.newa.forEach(d=>{const r=R(d.id);rows.push([d.id,d.title,d.kw,d.intent,eng(d.id,"g"),eng(d.id,"bing"),eng(d.id,"yandex"),r.blBuilt,r.blTarget,r.blType,d.why,r.assignee,r.note,d.created||"",d.updated||"",d.target||"",d.pri,SLABEL[r.status||"todo"]].map(q).join(","));});
   }
   return rows.join("\n");
 }
+
+/* ============ METRICS IMPORT ============ */
+function parseCSV(t){const rows=[];let r=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++;}else q=false;}else c+=ch;}else if(ch==='"')q=true;else if(ch===','||ch==='\t'){r.push(c);c="";}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);c="";if(r.some(x=>x!==""))rows.push(r);r=[];}else c+=ch;}r.push(c);if(r.some(x=>x!==""))rows.push(r);return rows;}
+function normPath(u){u=String(u||"").trim();try{u=new URL(u).pathname;}catch(e){}return u.replace(/\/+$/,"")||"/";}
+// k = "g" (Google) or "b" (Bing). Returns rows matched, or -1 when the file has no clicks/impressions columns.
+function importCSV(text,k){
+  const rows=parseCSV(text.replace(/^﻿/,""));if(rows.length<2)return 0;
+  const h=rows[0].map(x=>x.toLowerCase());
+  const ci=h.findIndex(x=>/click/.test(x)),ii=h.findIndex(x=>/impr/.test(x)),pi=h.findIndex(x=>/pos/.test(x));
+  if(ci<0||ii<0)return -1;
+  const num=v=>parseFloat(String(v||"").replace(/,/g,""))||0;
+  const map={};rows.slice(1).forEach(r=>{map[normPath(r[0])]=r;});
+  const at=new Date().toISOString().slice(0,10);let n=0;
+  STATE.blogs.forEach(d=>{const r=map[normPath(d.slug)];if(!r)return;
+    const row=STATE.rows[d.id]=STATE.rows[d.id]||blankRow(d.idxc);row.m=row.m||{};row.mp=row.mp||{};
+    if(row.m[k]&&row.m[k].at!==at)row.mp[k]=row.m[k]; // keep the previous import for the ▲▼ trend
+    row.m[k]={c:num(r[ci]),i:num(r[ii]),p:pi>=0?num(r[pi]):0,at};n++;});
+  return n;
+}
+function tot(id){const m=R(id).m||{},z={c:0,i:0,p:0};const g=m.g||z,b=m.b||z,ai=R(id).ai||{};
+  const names=AIS.filter(a=>ai[a[0]]).map(a=>a[1]);return {g,b,c:g.c+b.c,i:g.i+b.i,ai:names.length,aiNames:names.join(" / ")};}
+
+/* ============ WHO'S RANKING ============ */
+function renderRank(){
+  const el=document.getElementById("view-rank");const pos=p=>p?(+p).toFixed(1):"—";
+  const blogs=STATE.blogs.map(d=>({d,t:tot(d.id),a:R(d.id).assignee||"—"})).sort((x,y)=>y.t.c-x.t.c||y.t.i-x.t.i);
+  const by={};blogs.forEach(x=>{const o=by[x.a]=by[x.a]||{n:0,done:0,c:0,i:0,pw:0,pi:0,p1:0,ai:0};o.n++;if(R(x.d.id).status==="done")o.done++;o.c+=x.t.c;o.i+=x.t.i;if(x.t.g.p){o.pw+=x.t.g.p*(x.t.g.i||1);o.pi+=(x.t.g.i||1);if(x.t.g.p<=10)o.p1++;}o.ai+=x.t.ai;});
+  const people=Object.keys(by).map(k=>Object.assign({name:k},by[k])).sort((x,y)=>y.c-x.c||y.i-x.i);
+  const has=blogs.some(x=>x.t.i>0||x.t.ai>0);
+  let h='<div class="opt-note">'+(has?'Numbers come from the last Google / Bing CSV import on the Blog &amp; Pages tab (28-day window). Avg position is impression-weighted; "Page 1" = Google position 10 or better.':'<b>No ranking data yet.</b> Go to Blog &amp; Pages → Import Google (GSC) CSV and Import Bing CSV. Assign each blog to a teammate so results roll up per person.')+'</div>';
+  h+='<div class="rank-h">By assignee — whose work is ranking</div><div class="table-wrap"><table class="rank"><thead><tr><th>#</th><th>Assignee</th><th class="num">Pages</th><th class="num">Done</th><th class="num">Clicks (G+Bing)</th><th class="num">Impressions</th><th class="num">Avg Google pos</th><th class="num">On page 1</th><th class="num">AI citations</th></tr></thead><tbody>';
+  people.forEach((o,i)=>{h+='<tr><td class="id">'+(i+1)+'</td><td class="title">'+esc(o.name==="—"?"Unassigned":o.name)+'</td><td class="num">'+o.n+'</td><td class="num">'+o.done+'</td><td class="num"><b>'+o.c+'</b></td><td class="num">'+o.i+'</td><td class="num">'+(o.pi?(o.pw/o.pi).toFixed(1):"—")+'</td><td class="num">'+o.p1+'</td><td class="num">'+o.ai+'</td></tr>';});
+  h+='</tbody></table></div><div class="rank-h">By blog / page — what is actually ranking</div><div class="table-wrap"><table class="rank"><thead><tr><th>#</th><th>Blog / page</th><th>Assignee</th><th class="num">G clicks</th><th class="num">G impr</th><th class="num">G pos</th><th class="num">Bing clicks</th><th class="num">Bing impr</th><th class="num">Bing pos</th><th>AI cited by</th></tr></thead><tbody>';
+  blogs.forEach((x,i)=>{h+='<tr><td class="id">'+(i+1)+'</td><td class="title">'+esc(x.d.title)+'<div class="slug">'+esc(x.d.slug)+'</div></td><td>'+esc(x.a)+'</td><td class="num"><b>'+x.t.g.c+'</b></td><td class="num">'+x.t.g.i+'</td><td class="num">'+pos(x.t.g.p)+'</td><td class="num"><b>'+x.t.b.c+'</b></td><td class="num">'+x.t.b.i+'</td><td class="num">'+pos(x.t.b.p)+'</td><td class="small">'+esc(x.t.aiNames||"—")+'</td></tr>';});
+  el.innerHTML=h+'</tbody></table></div>';
+}
+
+/* ============ CLIENTS ============ */
+function clientName(){const c=CLIENTS.find(x=>x.id===CLIENT);return c?c.name:CLIENT;}
+async function loadClients(){
+  // ponytail: client list is read on connect only (no realtime); a teammate's new client shows after refresh
+  const {data}=await sb.from("tracker").select("data").eq("id","_clients").maybeSingle();
+  if(data&&data.data&&Array.isArray(data.data.list)&&data.data.list.length)CLIENTS=data.data.list;
+  if(!CLIENTS.find(x=>x.id===CLIENT)){CLIENT="main";}
+  document.getElementById("brand").textContent=clientName();document.title=clientName()+" SEO/AEO Tracker — Team Shared";
+}
+function renderSide(){
+  const el=document.getElementById("side");
+  el.innerHTML='<div class="lbl">Clients</div><button data-c="*"'+(view==="all"?' class="active"':'')+'>All clients</button>'+CLIENTS.map(c=>'<button data-c="'+esc(c.id)+'"'+(view!=="all"&&c.id===CLIENT?' class="active"':'')+'>'+esc(c.name)+'</button>').join("")+'<button class="add" id="add-client">+ Add client</button>';
+  el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>b.dataset.c==="*"?showView("all"):switchClient(b.dataset.c));
+  document.getElementById("add-client").onclick=async()=>{
+    const name=(prompt("Client name (e.g. Hamuq, Bytown Bath):")||"").trim();if(!name||!sb)return;
+    const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+    if(!id||id==="main"||id.charAt(0)==="_"||CLIENTS.find(c=>c.id===id)){alert("That client already exists or the name is not usable.");return;}
+    CLIENTS.push({id,name});
+    const {error}=await sb.from("tracker").upsert({id:"_clients",data:{list:CLIENTS},updated_at:new Date().toISOString()});
+    if(error){CLIENTS.pop();alert("Could not save the client: "+error.message);return;}
+    switchClient(id);
+  };
+}
+async function switchClient(id){
+  CLIENT=id;try{localStorage.setItem("b2r_client",id);}catch(e){}
+  if(view==="all")view="blogs";
+  await connect(CUR_U,CUR_K);showView(view);
+}
+async function renderAll(){
+  const el=document.getElementById("view-all");el.innerHTML='<div class="opt-note">Loading all clients…</div>';
+  const {data,error}=await sb.from("tracker").select("id,data");
+  if(error){el.innerHTML='<div class="opt-note">Could not load: '+esc(error.message)+'</div>';return;}
+  const byId={};(data||[]).forEach(r=>byId[r.id]=r.data||{});
+  let h='<div class="rank-h">All clients</div><div class="table-wrap"><table class="rank"><thead><tr><th>Client</th><th class="num">Blogs / pages</th><th class="num">Technical</th><th class="num">New articles</th><th class="num">In progress</th><th class="num">Done</th><th class="num">% complete</th><th class="num">Clicks (G+Bing)</th><th class="num">AI citations</th></tr></thead><tbody>';
+  CLIENTS.forEach(c=>{const d=byId[c.id];const st=d?d:{};const rows=st.rows||{};
+    const blogs=st.blogs||(c.id==="main"?BLOGS:[]),tech=st.tech||(c.id==="main"?TECH:[]),newa=st.newa||[];
+    const ids=blogs.concat(tech,newa).map(x=>x.id);const done=ids.filter(i=>(rows[i]||{}).status==="done").length,doing=ids.filter(i=>(rows[i]||{}).status==="doing").length;
+    let clicks=0,ai=0;blogs.forEach(b=>{const r=rows[b.id]||{},m=r.m||{};clicks+=((m.g||{}).c||0)+((m.b||{}).c||0);ai+=Object.values(r.ai||{}).filter(Boolean).length;});
+    h+='<tr class="click" data-c="'+esc(c.id)+'"><td class="title">'+esc(c.name)+'</td><td class="num">'+blogs.length+'</td><td class="num">'+tech.length+'</td><td class="num">'+newa.length+'</td><td class="num">'+doing+'</td><td class="num">'+done+'</td><td class="num">'+(ids.length?Math.round(done/ids.length*100):0)+'%</td><td class="num"><b>'+clicks+'</b></td><td class="num">'+ai+'</td></tr>';});
+  el.innerHTML=h+'</tbody></table></div>';
+  el.querySelectorAll("tr.click").forEach(tr=>tr.onclick=()=>switchClient(tr.dataset.c));
+}
+function nextId(arr,prefix){let max=0;arr.forEach(d=>{const m=new RegExp("^"+prefix+"0*(\\d+)$").exec(d.id);if(m)max=Math.max(max,+m[1]);});return prefix+String(max+1).padStart(2,"0");}
 
 /* ============ PLAYBOOK ============ */
 function buildPlaybook(){
@@ -524,17 +662,30 @@ function buildPlaybook(){
 }
 
 /* ============ TAB + TOOLBAR WIRING ============ */
-document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");view=t.dataset.view;
-  ["blogs","tech","newa","play"].forEach(v=>document.getElementById("view-"+v).classList.toggle("hidden",view!==v));
-  const isData=view!=="play";
+const VIEWS=["blogs","tech","newa","rank","all","play"];
+function showView(v){
+  view=v;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
+  VIEWS.forEach(x=>document.getElementById("view-"+x).classList.toggle("hidden",view!==x));
+  const isData=["blogs","tech","newa"].indexOf(view)>=0;
   document.getElementById("toolbar").style.display=isData?"":"none";
   document.getElementById("legend").style.display=isData?"":"none";
   document.getElementById("opt-note").style.display=isData?"":"none";
+  renderSide();
   if(view==="play")return;
-  document.querySelectorAll("#filt-pri button").forEach((b,i)=>b.classList.toggle("active",i===0));fPri="all";
-  buildCtx();render();
-});
+  if(isData){document.querySelectorAll("#filt-pri button").forEach((b,i)=>b.classList.toggle("active",i===0));fPri="all";buildCtx();}
+  render();
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>showView(t.dataset.view));
+const asSel=document.getElementById("filt-as");asSel.innerHTML='<option value="all">Everyone</option>'+ASSIGNEES.map(a=>'<option value="'+a+'">'+(a==="—"?"Unassigned":a)+'</option>').join("");asSel.onchange=()=>{fAs=asSel.value;render();};
+document.getElementById("add-blog").onclick=()=>{const id=nextId(STATE.blogs,"P");STATE.blogs.push({id,title:"New page title",slug:"/blog/",grp:"A",idx:"",idxc:"no",haskw:"",hc:"partial",reason:"",task:"",kw:"",pri:"P2"});STATE.rows[id]=blankRow("no");render();counts();push();};
+document.getElementById("add-tech").onclick=()=>{const id=nextId(STATE.tech,"T");STATE.tech.push({id,asset:"New item",type:"Site",issue:"",task:"",kw:"",pri:"P2"});STATE.rows[id]=blankMeta();render();counts();push();};
+let impKind="g";const impFile=document.getElementById("imp-file");
+document.getElementById("imp-g").onclick=()=>{impKind="g";impFile.value="";impFile.click();};
+document.getElementById("imp-b").onclick=()=>{impKind="b";impFile.value="";impFile.click();};
+impFile.onchange=async()=>{const f=impFile.files[0];if(!f)return;const n=importCSV(await f.text(),impKind);const msg=document.getElementById("imp-msg");
+  msg.textContent=n<0?"That file has no Clicks / Impressions columns — export the Pages report.":n===0?"No rows matched. Check that each row's URL slug matches the page path in the export.":(impKind==="g"?"Google":"Bing")+": updated "+n+" of "+STATE.blogs.length+" rows.";
+  if(n>0){render();push();}};
 document.getElementById("filt-pri").onclick=e=>{if(e.target.dataset.v){document.querySelectorAll("#filt-pri button").forEach(b=>b.classList.remove("active"));e.target.classList.add("active");fPri=e.target.dataset.v;render();}};
 document.getElementById("search").oninput=e=>{fQ=e.target.value.toLowerCase().trim();render();};
 document.getElementById("add-topic").onclick=()=>{
@@ -547,8 +698,8 @@ document.getElementById("add-topic").onclick=()=>{
   render();counts();push();
   const tb=document.getElementById("tb-newa");const last=tb&&tb.lastElementChild;if(last){last.scrollIntoView({behavior:"smooth",block:"center"});const inp=last.querySelector("input.title");if(inp){inp.focus();inp.select();}}
 };
-document.getElementById("csv-dl").onclick=()=>{const blob=new Blob([csv()],{type:"text/csv;charset=utf-8;"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="blazer2role-"+view+".csv";a.click();};
-document.getElementById("refresh").onclick=async()=>{if(!sb)return;const {data}=await sb.from("tracker").select("data").eq("id","main").maybeSingle();if(data){STATE=mergeWithSeed(data.data);render();counts();}};
+document.getElementById("csv-dl").onclick=()=>{const blob=new Blob([csv()],{type:"text/csv;charset=utf-8;"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=clientName().toLowerCase().replace(/[^a-z0-9]+/g,"-")+"-"+view+".csv";a.click();};
+document.getElementById("refresh").onclick=async()=>{if(!sb)return;const {data}=await sb.from("tracker").select("data").eq("id",CLIENT).maybeSingle();if(data){STATE=mergeWithSeed(data.data);render();counts();}};
 document.getElementById("reconfig").onclick=()=>showSetup(true);
 document.getElementById("su-go").onclick=()=>{const u=document.getElementById("su-url").value.trim().replace(/\/$/,"");const k=document.getElementById("su-key").value.trim();if(!u||!k){showSetup(true,"Please fill in both fields.");return;}connect(u,k);};
 document.getElementById("invite").onclick=e=>{const u=localStorage.getItem(LS_URL),k=localStorage.getItem(LS_KEY);if(!u||!k)return;navigator.clipboard.writeText(location.origin+location.pathname+"#"+encodeURIComponent(u)+"|"+encodeURIComponent(k));e.target.textContent="Copied ✓";setTimeout(()=>e.target.textContent="Copy invite link",1500);};

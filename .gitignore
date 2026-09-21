@@ -1,2 +1,5 @@
 hamuq-src.html
 build.py
+v2_patch.py
+*.bak
+publishable.key
