@@ -530,7 +530,7 @@ function render(){
   document.querySelectorAll(".cell-ed").forEach(el=>el.onblur=()=>{const d=(STATE[el.dataset.arr]||[]).find(x=>x.id===el.dataset.id);if(!d)return;const v=el.textContent.trim();if(d[el.dataset.f]===v)return;d[el.dataset.f]=v;push();});
   document.querySelectorAll(".row-sel").forEach(el=>el.onchange=()=>{const d=(STATE[el.dataset.arr]||[]).find(x=>x.id===el.dataset.id);if(!d)return;d[el.dataset.f]=el.value;render();push();});
   document.querySelectorAll(".ai-chip").forEach(el=>el.onclick=()=>{const r=STATE.rows[el.dataset.id]=STATE.rows[el.dataset.id]||blankMeta();r.ai=r.ai||{};r.ai[el.dataset.ai]=!r.ai[el.dataset.ai];el.classList.toggle("on",r.ai[el.dataset.ai]);push();});
-  document.querySelectorAll("[data-delrow]").forEach(b=>b.onclick=()=>{const arr=STATE[b.dataset.arr];const i=arr.findIndex(x=>x.id===b.dataset.delrow);if(i<0||!confirm("Delete row "+b.dataset.delrow+"? This removes it for the whole team."))return;arr.splice(i,1);delete STATE.rows[b.dataset.delrow];render();counts();push();});
+  document.querySelectorAll("[data-delrow]").forEach(b=>b.onclick=()=>{const arr=STATE[b.dataset.arr];const i=arr.findIndex(x=>x.id===b.dataset.delrow);if(i<0)return;if(!b.dataset.armed){b.dataset.armed="1";b.textContent="Sure?";b.style.width="auto";b.style.padding="0 8px";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent="×";b.style.width="";b.style.padding="";}},3000);return;}arr.splice(i,1);delete STATE.rows[b.dataset.delrow];render();counts();push();});
   document.querySelectorAll(".status-btn").forEach(b=>b.onclick=()=>{const id=b.dataset.id;const r=R(id);r.status=SNEXT[r.status||"todo"];r.by=(r.status==="done"&&me)?("done by "+me):(r.by||"");render();counts();push();});
   document.querySelectorAll(".how-btn").forEach(b=>b.onclick=()=>{const row=document.querySelector('tr[data-howrow="'+b.dataset.how+'"]');if(row){const open=row.classList.toggle("hidden")===false;b.innerHTML=open?"Hide ↑":"Steps ↓";}});
   document.querySelectorAll("select.idx-sel").forEach(s=>s.onchange=()=>{const r=R(s.dataset.id);r[s.dataset.eng].s=s.value;s.className="idx-sel "+SCLASS[s.value];if(s.dataset.eng==="g")counts();push();});
@@ -612,15 +612,18 @@ async function loadClients(){
 }
 function renderSide(){
   const el=document.getElementById("side");
-  el.innerHTML='<div class="lbl">Clients</div><button data-c="*"'+(view==="all"?' class="active"':'')+'>All clients</button>'+CLIENTS.map(c=>'<button data-c="'+esc(c.id)+'"'+(view!=="all"&&c.id===CLIENT?' class="active"':'')+'>'+esc(c.name)+'</button>').join("")+'<button class="add" id="add-client">+ Add client</button>';
+  el.innerHTML='<div class="lbl">Clients</div><button data-c="*"'+(view==="all"?' class="active"':'')+'>All clients</button>'+CLIENTS.map(c=>'<button data-c="'+esc(c.id)+'"'+(view!=="all"&&c.id===CLIENT?' class="active"':'')+'>'+esc(c.name)+'</button>').join("")+'<button class="add" id="add-client">+ Add client</button><input id="new-client" class="hidden" placeholder="Client name, then Enter" style="width:100%;font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--accent);border-radius:9px;margin-top:8px;background:var(--card);">';
   el.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>b.dataset.c==="*"?showView("all"):switchClient(b.dataset.c));
-  document.getElementById("add-client").onclick=async()=>{
-    const name=(prompt("Client name (e.g. Hamuq, Bytown Bath):")||"").trim();if(!name||!sb)return;
+  const nc=document.getElementById("new-client");
+  document.getElementById("add-client").onclick=()=>{nc.classList.remove("hidden");nc.focus();};
+  nc.onkeydown=async e=>{
+    if(e.key==="Escape"){nc.classList.add("hidden");return;} if(e.key!=="Enter")return;
+    const name=nc.value.trim();if(!name||!sb)return;
     const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-    if(!id||id==="main"||id.charAt(0)==="_"||CLIENTS.find(c=>c.id===id)){alert("That client already exists or the name is not usable.");return;}
+    if(!id||id==="main"||id.charAt(0)==="_"||CLIENTS.find(c=>c.id===id)){nc.value="";nc.placeholder="Already exists — try another";return;}
     CLIENTS.push({id,name});
     const {error}=await sb.from("tracker").upsert({id:"_clients",data:{list:CLIENTS},updated_at:new Date().toISOString()});
-    if(error){CLIENTS.pop();alert("Could not save the client: "+error.message);return;}
+    if(error){CLIENTS.pop();nc.value="";nc.placeholder="Save failed: "+error.message;return;}
     switchClient(id);
   };
 }
