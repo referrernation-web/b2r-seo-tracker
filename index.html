@@ -448,7 +448,7 @@ const NOTE={
   newa:"Topics not yet created. Index + backlinks track once published. Add, edit, delete freely; auto-synced to the team."
 };
 function buildCtx(){
-  const c=CTX[view];const box=document.getElementById("filt-ctx");
+  const c=CTX[view];if(!c)return; // rank/all/play have no toolbar contextconst box=document.getElementById("filt-ctx");
   document.getElementById("ctx-label").textContent=c.label;box.innerHTML="";
   c.opts.forEach((v,i)=>{const b=document.createElement("button");b.textContent=v==="all"?"All":v;b.dataset.v=v;if(i===0)b.classList.add("active");
     b.onclick=()=>{box.querySelectorAll("button").forEach(x=>x.classList.remove("active"));b.classList.add("active");fCtx=v;render();};box.appendChild(b);});
