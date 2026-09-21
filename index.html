@@ -165,6 +165,7 @@
   .pb-card .tip{background:#eaf3ec;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#2f6b43;margin-top:10px;}
   .pb-card .warn{background:#f9ece5;border-radius:8px;padding:9px 12px;font-size:12.5px;color:#a23a12;margin-top:10px;}
 </style>
+<link rel="stylesheet" href="workspace.css?v=6">
 </head>
 <body>
 <nav class="side" id="side"></nav>
@@ -208,8 +209,8 @@ alter publication supabase_realtime add table tracker;</pre>
       <span><span id="brand">Blazer2Role</span> · SEO + AEO Tracker · Team Shared</span>
       <span class="conn off" id="conn">Not connected</span>
     </div>
-    <h1>Shared optimization tracker — live for the whole team</h1>
-    <p>Blog &amp; Pages, Platform &amp; Technical, and Recommended New Articles. Everyone sees the same data; edits auto-save and auto-sync across all teammates. Assign tasks, track index status per engine, and log backlinks.</p>
+    <h1>SEO workspace</h1>
+    <p>Plan the work. Review the details. Track the results.</p>
     <div class="who">
       <span class="lbl">You are:</span>
       <input id="me-name" placeholder="Your name (e.g. Michael)" autocomplete="off">
@@ -251,7 +252,7 @@ alter publication supabase_realtime add table tracker;</pre>
     <input class="search" id="search" placeholder="Search...">
     <button class="btn" id="csv-dl">Download CSV</button>
     <button class="btn ghost" id="refresh">Refresh</button>
-    <span class="save-pill" id="save-pill">Synced ✓</span>
+    <span class="save-pill" id="save-pill" role="status"></span>
   </div>
 </div>
 
@@ -302,7 +303,7 @@ alter publication supabase_realtime add table tracker;</pre>
 </div>
 
 <footer><div class="wrap">
-  <p style="max-width:84ch;">Shared via Supabase. All edits auto-save to one database and sync to every teammate in real time. Export CSV anytime for a snapshot. No SEO method guarantees a #1 ranking or AI citation — the goal is doing the right things consistently. This SPA has no redirect layer: every published slug is permanent.</p>
+  <p style="max-width:84ch;">Shared via Supabase. Use Save changes in task details; the header confirms server saves. Export the current view for a CSV snapshot. Display names are self-reported. No SEO method guarantees a #1 ranking or AI citation.</p>
 </div></footer>
 
 <script>
@@ -380,14 +381,16 @@ async function connect(url,key){
     if(!sb||CUR_U!==url||CUR_K!==key) sb=supabase.createClient(url,key);
     CUR_U=url;CUR_K=key;
     // ensure row exists / load it
-    let {data,error}=await sb.from("tracker").select("data").eq("id",CLIENT).maybeSingle();
+    let {data,error}=await sb.from("tracker").select("data,updated_at").eq("id",CLIENT).maybeSingle();
     if(error) throw error;
     if(!data){
       STATE=seedState();
-      const ins=await sb.from("tracker").insert({id:CLIENT,data:STATE});
+      const ins=await sb.from("tracker").insert({id:CLIENT,data:STATE}).select("updated_at").single();
       if(ins.error) throw ins.error;
+      sync.reset(ins.data.updated_at);
     } else {
       STATE=mergeWithSeed(data.data);
+      sync.reset(data.updated_at);
     }
     localStorage.setItem(LS_URL,url); localStorage.setItem(LS_KEY,key);
     setConn("on","Live · synced");
@@ -404,7 +407,7 @@ async function connect(url,key){
 // make sure new seed items (added later) appear even on old saved data
 function mergeWithSeed(saved){
   const base=seedState(); saved=saved||{};
-  const out={rows:Object.assign({},base.rows,saved.rows||{}), blogs:saved.blogs||base.blogs, tech:saved.tech||base.tech, newa:saved.newa||base.newa, v:2};
+  const out=Object.assign({},saved,{rows:Object.assign({},base.rows,saved.rows||{}), blogs:saved.blogs||base.blogs, tech:saved.tech||base.tech, newa:saved.newa||base.newa, v:2});
   out.blogs.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=blankRow(d.idxc);});
   out.tech.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=blankMeta();});
   out.newa.forEach(d=>{if(!out.rows[d.id])out.rows[d.id]=Object.assign(blankIdx(),blankMeta());});
@@ -435,7 +438,7 @@ function push(){
 }
 
 /* ============ RENDER ============ */
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 function R(id){return STATE.rows[id]||{};}
 const CTX={
   blogs:{label:"Group",opts:["all","A","B","C"],field:"grp"},
@@ -542,7 +545,7 @@ function render(){
 }
 function counts(){
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  const all=STATE.blogs.map(d=>d.id).concat(STATE.tech.map(d=>d.id)).concat(STATE.newa.map(d=>d.id));
+  const all=STATE.blogs.map(d=>d.id).concat(STATE.tech.map(d=>d.id)).concat(STATE.newa.map(d=>d.id)).filter(id=>!R(id).archived);
   const done=all.filter(id=>(R(id).status)==="done").length;
   const doing=all.filter(id=>(R(id).status)==="doing").length;
   set("s-blogs",STATE.blogs.length);set("s-tech",STATE.tech.length);set("s-newa",STATE.newa.length);
@@ -710,7 +713,7 @@ const meEl=document.getElementById("me-name");
 meEl.oninput=()=>{me=meEl.value.trim();localStorage.setItem(LS_ME,me);};
 
 /* ============ BOOT ============ */
-(function boot(){
+function boot(){
   me=localStorage.getItem(LS_ME)||"";meEl.value=me;
   let u=localStorage.getItem(LS_URL),k=localStorage.getItem(LS_KEY);
   const h=location.hash.slice(1).split("|");if(h.length===2){u=decodeURIComponent(h[0]);k=decodeURIComponent(h[1]);history.replaceState(null,"",location.pathname);}
@@ -718,7 +721,8 @@ meEl.oninput=()=>{me=meEl.value.trim();localStorage.setItem(LS_ME,me);};
   // start hidden on playbook controls until connected
   if(u&&k){document.getElementById("su-url").value=u;document.getElementById("su-key").value=k;connect(u,k);}
   else {showSetup(true);}
-})();
+}
 </script>
+<script src="workspace.js?v=6"></script>
 </body>
 </html>
